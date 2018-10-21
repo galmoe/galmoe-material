@@ -1,0 +1,84 @@
+.u-wrap {
+  padding-top: 0!important;
+  width: 100%;
+}
+.content-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  -ms-flex-align: center;
+  max-width: 1155px;
+  overflow: auto;
+  white-space: nowrap;
+}
+.item {
+  display: inline-block;
+  vertical-align: top;
+  white-space: normal;
+  width: 231px;
+  padding: 0;
+  .thumb {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    height: 126.5px;
+    width: 230px;
+  }
+  .detail {
+    cursor: pointer;
+    display: flex;
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    .detail-spacing {
+      padding-right: 24px;
+      cursor: pointer;
+      display: flex;
+      -ms-flex-direction: column;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+    }
+    .d-title {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal;
+      -webkit-line-clamp: 2;
+      font-size: 1.1rem;
+      font-weight: 500;
+      line-height: 1.2rem;
+      margin: 8px 0 6px;
+    }
+    .d-info {
+      opacity: 0.8;
+      line-height: 1.2rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal;
+    }
+    .d-author {
+      &:hover {
+        color: #00a1d6;
+      }
+    }
+    .d-time {
+
+    }
+  }
+}
+.fol {
+  width: 100%;
+}
+.links-container {
+  padding-top: 5px;
+  .link-list {
+    display: inline-block;
+    margin-bottom: 20px;
+    width: 40%;
+    color: hsl(206.1, 79.3%, 52.7%);
+    font-weight: 400;
+    line-height: 1.8rem;
+    text-transform: none;
+    overflow-wrap: break-word;
+  }
+}

@@ -1,0 +1,123 @@
+.parallax-img-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding-top: 40%;
+  z-index: -2;
+}
+.parallax-img {
+  opacity: 1;
+  position: absolute;
+  display: block;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  margin: auto;
+}
+.time {
+  letter-spacing: 1px;
+}
+.count {
+  margin-left: .5em;
+}
+.user-link {
+  height: 24px;
+  text-decoration: none;
+  line-height: 24px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+}
+img {
+  max-width: 100%;
+}
+.tag-container {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+/*right*/
+.related-header {
+  margin-bottom: 12px;
+  display: flex;
+  -ms-flex-direction: row;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.related-item {
+  display: flex;
+  -ms-flex-direction: row;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  margin-top: 5px;
+  border-bottom: 1px solid;
+  border-color: rgba(0,0,0,.12);
+}
+.meta {
+  color: #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.s-thumb {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  width: 168px;
+  height: 97.5px;
+  overflow: hidden;
+  margin-right: 8px;
+}
+.meta-container {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.meta-title {
+  text-decoration: none;
+  word-wrap: break-word;
+  word-break: normal;
+  margin: 0 0 4px 0;
+  display: -webkit-box;
+  max-height: 48px;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  -webkit-line-clamp: 2;
+}
+.meta-author {
+  max-width: 100%;
+  display: flex;
+  -ms-flex-direction: row;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.meta-item {
+  align-items: center;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  justify-content: flex-start;
+  margin-right: 20px;
+  font-size: 0.85rem;
+}
+#article-content {
+  img {
+    margin-bottom: 8px;
+  }
+}
+.theme--dark {
+  .related-item {
+    border-color: hsla(0,0%,100%,.12);
+  }
+}

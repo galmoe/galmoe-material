@@ -1,0 +1,27 @@
+.theme--dark{
+  .primary--text {
+    color: #fff!important;
+  }
+  .primary {
+    background-color: #ffffff !important;
+    border-color: #ffffff !important;
+  }
+  .site {
+    color: #fff;
+  }
+  .root-link {
+    color: #fff;
+  }
+  .title-link {
+    color: #fff;
+  }
+  .v-pagination {
+    .v-pagination__item {
+      min-width: 25px;
+      padding: 0 5px;
+    }
+    .v-pagination__item--active {
+      color: #000;
+    }
+  }
+}

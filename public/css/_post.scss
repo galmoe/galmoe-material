@@ -1,0 +1,85 @@
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+.title-link {
+  font-size: 22px;
+  height: 30px;
+  color: #1976d2;
+}
+.title-link:hover {
+  color: #ffafc9;
+  transition: 0.3s;
+}
+.post-header {
+  overflow: hidden;
+  font-weight: 500;
+  padding: 0 0 0 2px;
+  white-space: nowrap;
+  -webkit-box-flex: auto;
+  -webkit-flex: auto;
+  flex: auto;
+  width: 120px;
+  overflow: hidden;
+}
+.post-author-name {
+  margin-left: 6px;
+  max-width: 100%;
+  white-space: nowrap;
+  float: left;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.user-link {
+  color: #1976d2;
+  caret-color: #1976d2;
+  font-size: 15px;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block;
+  -webkit-box-flex: auto;
+  -webkit-flex: auto;
+  flex: auto;
+}
+.post-category {
+  color: rgba(0,0,0,0.54);
+  font-size: 15px;
+  max-width: 100%;
+  white-space: nowrap;
+  word-break: break-all;
+  float: left;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.ca-category {
+  width: 22px;
+  height: 22px;
+  -webkit-box-flex: none;
+  -webkit-flex: none;
+  flex: none;
+}
+.ca-category path {
+  fill: #0f9d58;
+}
+.category-link {
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  -webkit-box-flex: auto;
+  -webkit-flex: auto;
+  flex: auto;
+  color: #0f9d58!important;
+}
+// editor
+.v-note-wrapper {
+  z-index: 1!important;
+}

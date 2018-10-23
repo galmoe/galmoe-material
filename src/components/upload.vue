@@ -1,33 +1,5 @@
-<!--<template>-->
-  <!--<vueCropper-->
-    <!--ref="cropper3"-->
-    <!--:img="example3.img"-->
-    <!--:autoCrop="example3.autoCrop"-->
-    <!--:autoCropWidth="example3.autoCropWidth"-->
-    <!--:autoCropHeight="example3.autoCropHeight"-->
-    <!--:fixedBox="example3.fixedBox"-->
-  <!--&gt;</vueCropper>-->
-<!--</template>-->
-
-<!--<script>-->
-<!--export default {-->
-  <!--name: 'upload',-->
-  <!--data: function () {-->
-    <!--return {-->
-      <!--example3: {-->
-        <!--img: 'https://lh3.googleusercontent.com/-xqohPJaBCsk/W6ISMlMnPHI/AAAAAAAAAH0/0MXsnEG3qEsKny5mTcPbIbRvLJhb3rs8wCJkCGAYYCw/w1355-h763-n-rw-no/yande.re%2B329218%2Banimal_ears%2Bfixed%2Bnekomimi%2Bnekotyabatake%2Bno_bra%2Bojitea%2Bopen_shirt%2Bpantsu%2Bpanty_pull%2Bpsycho_logic_love_comedy%2Btail%2Bthighhighs.jpg',-->
-        <!--autoCrop: true,-->
-        <!--autoCropWidth: 200,-->
-        <!--autoCropHeight: 200,-->
-        <!--fixedBox: true-->
-      <!--}-->
-    <!--}-->
-  <!--}-->
-<!--}-->
-<!--</script>-->
-
 <template>
-  <div class="cropper">
+  <div class="cropper" :style="{width: `${containerMaxW}px`, height: `${containerMaxH}px`}">
     <vueCropper
       ref="cropper"
       :img="opt.img"
@@ -39,6 +11,7 @@
       :autoCropWidth="opt.autoCropWidth"
       :autoCropHeight="opt.autoCropHeight"
       :fixed="opt.fixed"
+      :fixedBox="opt.fixedBox"
       :fixedNumber="opt.fixedNumber"
     ></vueCropper>
     <v-btn outline small color="primary"><i aria-hidden="true" class="v-icon material-icons theme--light primary--text">cloud_upload</i><label class="btn" for="uploads">&nbsp;选择</label></v-btn>
@@ -46,7 +19,7 @@
            accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event)">
     <v-btn outline small color="primary" @click="rotateLeft()"><v-icon small>rotate_left</v-icon></v-btn>
     <v-btn outline small color="primary" @click="rotateRight()"><v-icon small>rotate_right</v-icon></v-btn>
-    <v-btn outline small color="primary"><i aria-hidden="true" class="v-icon material-icons theme--light primary--text">done_outline</i>&nbsp;确定</v-btn>
+    <v-btn outline small color="primary" @click="upload()"><i aria-hidden="true" class="v-icon material-icons theme--light primary--text">done_outline</i>&nbsp;确定</v-btn>
     <v-btn outline small color="primary" @click="logBlob()"><i aria-hidden="true" class="v-icon material-icons theme--light primary--text">done_outline</i>&nbsp;log</v-btn>
     <a @click="down()" class="btn">download(blob)</a>
     <a :href="downImg" download="demo.png" ref="downloadDom"></a>
@@ -54,7 +27,27 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
+  props: {
+    containerMaxW: {
+      type: Number,
+      default: 500
+    },
+    containerMaxH: {
+      type: Number,
+      default: 500
+    }
+    // autoCropWidth: {
+    //   type: Number,
+    //   default: 200
+    // },
+    // autoCropHeight: {
+    //   type: Number,
+    //   default: 200
+    // }
+  },
   data: function () {
     return {
       opt: {
@@ -65,11 +58,13 @@ export default {
         canScale: true,
         autoCrop: true,
         // 只有自动截图开启 宽度高度才生效
-        autoCropWidth: 200,
-        autoCropHeight: 200,
+        autoCropWidth: 1150,
+        autoCropHeight: 500,
         // 开启宽度和高度比例
         fixed: true,
-        fixedNumber: [1, 1]
+        fixedBox: false,
+        fixedNumber: [1150, 500],
+        uploadCbLink: ''
       },
       downImg: '#'
     }
@@ -86,19 +81,25 @@ export default {
         console.log(data)
       })
     },
-    down () {
-      // event.preventDefault()
-      // 输出
-      this.$refs.cropper.getCropBlob(data => {
-        this.downImg = window.URL.createObjectURL(data)
-        if (window.navigator.msSaveBlob) {
-          var blobObject = new Blob([data])
-          window.navigator.msSaveBlob(blobObject, 'demo.png')
-        } else {
-          this.$nextTick(() => {
-            this.$refs.downloadDom.click()
-          })
+    upload () {
+      this.$refs.cropper.getCropBlob((data) => {
+        console.log(data)
+        const formData = new FormData()
+        formData.append('file', new Blob([data]))
+        const config = {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true
         }
+        axios.post('http://localhost:3000/api/upload', formData, config)
+          .then(res => {
+            if (res.data.type === 'success') {
+              console.log(res.data.src)
+            }
+            // if (response.data.code === 0) {
+            //   self.ImgUrl = response.data.data
+            // }
+            // console.log(response.data)
+          })
       })
     },
     uploadImg (e) {
@@ -125,45 +126,24 @@ export default {
       // 转化为blob
       reader.readAsArrayBuffer(file)
     },
+    down () {
+      // event.preventDefault()
+      // 输出
+      this.$refs.cropper.getCropBlob(data => {
+        this.downImg = window.URL.createObjectURL(data)
+        if (window.navigator.msSaveBlob) {
+          var blobObject = new Blob([data])
+          window.navigator.msSaveBlob(blobObject, 'demo.png')
+        } else {
+          this.$nextTick(() => {
+            this.$refs.downloadDom.click()
+          })
+        }
+      })
+    },
     imgLoad (msg) {
       console.log(msg)
     }
   }
 }
 </script>
-
-<!--<template>-->
-  <!--<v-layout row justify-center>-->
-    <!--<v-dialog v-model="dialog" scrollable max-width="300px">-->
-      <!--<v-btn slot="activator" color="primary" dark>Open Dialog</v-btn>-->
-      <!--<v-card>-->
-        <!--<vueCropper-->
-          <!--ref="cropper3"-->
-          <!--:img="example3.img"-->
-          <!--:autoCrop="example3.autoCrop"-->
-          <!--:autoCropWidth="example3.autoCropWidth"-->
-          <!--:autoCropHeight="example3.autoCropHeight"-->
-          <!--:fixedBox="example3.fixedBox"-->
-        <!--&gt;</vueCropper>-->
-      <!--</v-card>-->
-    <!--</v-dialog>-->
-  <!--</v-layout>-->
-<!--</template>-->
-
-<!--<script>-->
-  <!--export default {-->
-    <!--data () {-->
-      <!--return {-->
-        <!--dialogm1: '',-->
-        <!--dialog: false,-->
-        <!--example3: {-->
-          <!--img: 'https://lh3.googleusercontent.com/-xqohPJaBCsk/W6ISMlMnPHI/AAAAAAAAAH0/0MXsnEG3qEsKny5mTcPbIbRvLJhb3rs8wCJkCGAYYCw/w1355-h763-n-rw-no/yande.re%2B329218%2Banimal_ears%2Bfixed%2Bnekomimi%2Bnekotyabatake%2Bno_bra%2Bojitea%2Bopen_shirt%2Bpantsu%2Bpanty_pull%2Bpsycho_logic_love_comedy%2Btail%2Bthighhighs.jpg',-->
-          <!--autoCrop: true,-->
-          <!--autoCropWidth: 200,-->
-          <!--autoCropHeight: 200,-->
-          <!--fixedBox: true-->
-        <!--}-->
-      <!--}-->
-    <!--}-->
-  <!--}-->
-<!--</script>-->

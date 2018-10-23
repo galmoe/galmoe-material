@@ -47,6 +47,10 @@ const Apost = () => import(/* webpackChunkName: "admin" */ '@/components/admin/p
 const Acomment = () => import(/* webpackChunkName: "admin" */ '@/components/admin/comment')
 const Anews = () => import(/* webpackChunkName: "admin" */ '@/components/admin/news')
 
+// about
+const about = () => import(/* webpackChunkName: "about" */ '@/components/about/about')
+const usage = () => import(/* webpackChunkName: "about" */ '@/components/about/usage')
+
 export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
@@ -76,11 +80,6 @@ export default new Router({
         { path: 'resent', meta: { checkLogin: true }, component: resent },
         { path: 'system', meta: { checkLogin: true }, component: system }
       ]
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: About
     },
     {
       path: '/article/:aid',
@@ -143,6 +142,16 @@ export default new Router({
         { path: 'user', meta: { checkAdmin: true }, component: Auser },
         { path: 'comment', meta: { checkAdmin: true }, component: Acomment },
         { path: 'news', meta: { checkAdmin: true }, component: Anews }
+      ]
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: About,
+      redirect: '/about/about',
+      children: [
+        { path: 'about', component: about },
+        { path: 'usage', component: usage }
       ]
     },
     {

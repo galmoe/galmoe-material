@@ -11,9 +11,14 @@
                 :style="{top: `${offsetTop}px`}">
             </div>
             <div class="banner-editor">
-              <v-btn icon class="grey darken-2 white--text">
-                <v-icon>camera_alt</v-icon>
-              </v-btn>
+              <v-dialog v-model="dialog" width="1155">
+                <v-btn icon  slot="activator" class="grey darken-2 white--text">
+                  <v-icon>camera_alt</v-icon>
+                </v-btn>
+                <v-card style="height: 600px">
+                  <upload :containerMaxW="1155" :containerMaxH="550" />
+                </v-card>
+              </v-dialog>
             </div>
             <div class="u-info">
               <a href="#" class="u-link">
@@ -90,12 +95,14 @@
 </template>
 
 <script>
+import upload from '@/components/upload'
 import { mapState } from 'vuex'
 
 export default {
   name: 'user',
   data () {
     return {
+      dialog: false,
       uid: this.$route.params.uid,
       isFix: false,
       bars: [
@@ -121,6 +128,9 @@ export default {
         this.isFix = false
       }
     }
+  },
+  components: {
+    upload
   }
 }
 </script>

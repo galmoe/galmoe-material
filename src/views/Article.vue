@@ -36,6 +36,12 @@
               </div>
             </div>
           </div>
+          <v-breadcrumbs>
+            <v-icon slot="divider">chevron_right</v-icon>
+            <v-breadcrumbs-item :to="'/'">首页</v-breadcrumbs-item>
+            <v-breadcrumbs-item :to="'/category/anime'">Anime</v-breadcrumbs-item>
+            <v-breadcrumbs-item disabled>Rick and Morty</v-breadcrumbs-item>
+          </v-breadcrumbs>
           <!--v-html-->
           <v-card-text id="article-content" v-viewer class="images">
             <p>And that's how the family end up on the tiny planet in a small makeshift cabin. Everyone minus Rick was in the cabin watching a television Myra hand put together.</p>
@@ -75,7 +81,7 @@
             <img src="https://ws1.sinaimg.cn/large/006nOlwNly1fwfwlsuj1ej31hc0rrhdt.jpg" alt="">
             <img src="https://ws1.sinaimg.cn/large/006nOlwNly1fwfwls82nej31hc0rfe81.jpg" alt="">
             <img src="https://ws1.sinaimg.cn/large/006nOlwNly1fwfwlscisjj31hc0rke81.jpg" alt="">
-            <iframe src="//player.bilibili.com/player.html?aid=33030227&cid=57812220&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+            <!--<iframe src="//player.bilibili.com/player.html?aid=33030227&cid=57812220&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>-->
           </v-card-text>
           <!--download-->
           <div class="v-card__text"><h4>下载</h4></div>
@@ -110,6 +116,26 @@
             <p>第三季</p>
             <p>pan.baidu.com/s/1bZ797CUSpfxc5j-vSTMYqw</p>
           </v-card-text>
+          <!--action-->
+          <v-card-actions>
+            <v-btn icon :outline="!isLike" @click="like_cb">
+              <v-icon :class="[{'light-blue--text': isLike}]">thumb_up</v-icon>
+            </v-btn>&nbsp;{{ like }}&nbsp;
+            <v-btn icon :outline="!isFav" @click="fav_cb">
+              <v-icon :class="[{'red--text lighten-3': isFav}]">favorite</v-icon>
+            </v-btn>&nbsp;{{ fav }}&nbsp;
+            <v-spacer></v-spacer>
+            <v-menu offset-y>
+              <v-btn flat slot="activator">
+                more
+              </v-btn>
+              <v-list>
+                <v-list-tile @click="">
+                  <v-list-tile-title>举报</v-list-tile-title>
+                </v-list-tile>
+              </v-list>
+            </v-menu>
+          </v-card-actions>
           <!--tag-->
             <div class="v-card__text"><h4>Tag</h4></div>
           <hr :class="['v-divider', `theme--${theme}`]">
@@ -161,6 +187,10 @@ export default {
     return {
       Rules,
       pid: this.$route.params.pid,
+      like: 233,
+      isLike: false,
+      fav: 233,
+      isFav: false,
       captcha: '111111',
       captchaURL: 'https://cas.baidu.com/?action=image',
       offsetTop: 0,
@@ -203,6 +233,24 @@ export default {
         window.open(this.link)
       } else {
         window.open(`https://${this.link}`)
+      }
+    },
+    like_cb () {
+      if (this.isLike) {
+        this.isLike = false
+        this.like--
+      } else {
+        this.isLike = true
+        this.like++
+      }
+    },
+    fav_cb () {
+      if (this.isFav) {
+        this.isFav = false
+        this.fav--
+      } else {
+        this.isFav = true
+        this.fav++
       }
     }
   },

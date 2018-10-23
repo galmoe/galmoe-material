@@ -2,7 +2,7 @@
   <div class="tag-container">
     <v-chip small outline color="primary" v-for="t in desserts" :key="t.tag" @click="goToTag(t.tag)">{{ t.tag }}</v-chip>
     <v-dialog v-model="dialogEdit" width="500px" scrollable>
-      <v-chip small outline slot="activator" color="primary">编辑&nbsp;<i aria-hidden="true" class="v-icon material-icons theme--light primary--text">add</i></v-chip>
+      <v-chip small outline slot="activator" color="primary">编辑&nbsp;<i aria-hidden="true" class="v-icon material-icons">add</i></v-chip>
       <v-card>
         <div style="padding: 10px">
           <v-text-field

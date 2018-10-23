@@ -73,7 +73,8 @@ const api = {
     getUserInfo: (uid) => instance.get(`u/${uid}`),
     getMessage: () => instance.get(`u/message`),
     getErrMessage: () => instance.get(`u/errmessage`)
-  }
+  },
+  upload: (data) => instance.post(`upload`, data)
 }
 
 export default api

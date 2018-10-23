@@ -193,7 +193,6 @@ export default {
     showLogin: false,
     showSearch: false,
     q: '',
-    dialog: false,
     drawer: null,
     userMenu: ['主页', '设置和安全', '退出']
   }),

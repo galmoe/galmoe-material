@@ -5,16 +5,8 @@
     <v-card-text>
       <div class="avatar-upload-container clearfix">
         <img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4" style="width: 150px; height: 150px;" alt="">
-        <!--<label class="btn button-change-avatar text-center" @click="changeAvator">-->
-          <!--Upload-->
-          <!--<input id="upload-profile-picture" type="file" class="file-chooser">-->
-        <!--</label>-->
-        <v-dialog v-model="dialog" width="500px">
-          <v-chip small outline slot="activator" color="primary" class="btn button-change-avatar text-center">编辑&nbsp;</v-chip>
-          <v-card style="height: 600px">
-            <upload />
-          </v-card>
-        </v-dialog>
+        <label class="btn button-change-avatar text-center" @click="showUpload = true">Upload</label>
+        <upload :containerMaxW="500" :containerMaxH="500" :visible="showUpload" @close="showUpload=false" :type="'avatar'" />
       </div>
       <v-text-field
         ref="name"
@@ -57,7 +49,7 @@ export default {
     sign: '',
     email: '',
     Rules,
-    dialog: false
+    showUpload: false
   }),
   computed: {
     form () {
@@ -71,9 +63,6 @@ export default {
   methods: {
     submit () {
       window.alert('submit')
-    },
-    changeAvator () {
-
     }
   },
   components: {

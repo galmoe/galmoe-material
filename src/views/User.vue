@@ -6,31 +6,24 @@
           <div class="v-parallax u">
             <div class="parallax-img-container">
               <img
-                src="https://ws1.sinaimg.cn/large/006nOlwNly1fwfzijcndvj315o0ogtgr.jpg"
+                :src="background"
                 class="parallax-img"
                 :style="{top: `${offsetTop}px`}">
             </div>
             <div class="banner-editor">
-              <v-dialog v-model="dialog" width="1155">
-                <v-btn icon  slot="activator" class="grey darken-2 white--text">
-                  <v-icon>camera_alt</v-icon>
-                </v-btn>
-                <v-card style="height: 600px">
-                  <upload :containerMaxW="1155" :containerMaxH="550" />
-                </v-card>
-              </v-dialog>
+              <v-btn icon class="grey darken-2 white--text" @click="showUpload=true">
+                <v-icon>camera_alt</v-icon>
+              </v-btn>
+              <upload :containerMaxW="1155" :containerMaxH="550" :visible="showUpload" :autoCropWidth="1150" :fixedNumber="[1150, 500]" :type="'background'" @close="showUpload=false" />
             </div>
             <div class="u-info">
               <a href="#" class="u-link">
-                <img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4" alt="Beats0" class="u-avatar">
+                <img :src="avatar" :alt="uname" class="u-avatar">
               </a>
               <div class="u-basic">
-                <div class="u-name">Beats0</div>
+                <div class="u-name">{{ uname }}</div>
                 <div class="u-sign-spacing">
-                  <h4 title="Twitter、Github、Steam @Beats0 写代码，吃吃吃" class="u-sign">
-                    Twitter、Github、Steam @Beats0
-                    写代码，吃吃吃
-                  </h4>
+                  <h4 :title="sign" class="u-sign">{{ sign }}</h4>
                 </div>
               </div>
               <div class="u-action">
@@ -96,30 +89,34 @@
 
 <script>
 import upload from '@/components/upload'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'user',
   data () {
     return {
-      dialog: false,
+      showUpload: false,
       uid: this.$route.params.uid,
       isFix: false,
-      bars: [
-        { 'class': '' }
-      ],
       offsetTop: 0
     }
   },
-  mounted () {
-    console.log(this.uid)
+  created () {
+    this.getUserInfo(this.uid)
   },
   computed: {
     ...mapState({
-      theme: state => state.theme.theme
+      theme: state => state.theme.theme,
+      uname: state => state.user.uname,
+      avatar: state => state.user.avatar,
+      sign: state => state.user.sign,
+      background: state => state.user.background
     })
   },
   methods: {
+    ...mapActions({
+      getUserInfo: 'user/getUserInfo'
+    }),
     onScroll (e) {
       this.offsetTop = window.pageYOffset || document.documentElement.scrollTop
       if (this.offsetTop >= 500) {

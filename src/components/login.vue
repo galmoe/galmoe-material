@@ -56,17 +56,23 @@
         <v-layout row wrap>
           <v-flex xs12>
             <v-text-field
-              v-model="name"
+              v-model.lazy="uname"
               prepend-icon="account_circle"
               label="昵称"
+              @change="checkUnameF"
               :rules="[Rules.required, Rules.hasBlank, Rules.min(3), Rules.max(10)]"
+              :error="check.uname.isErr"
+              :error-messages="check.uname.msg"
             ></v-text-field>
           </v-flex>
           <v-flex xs12>
             <v-text-field
-              v-model="email"
+              v-model.lazy="email"
               prepend-icon="mail"
               label="邮箱"
+              @change="checkEmailF"
+              :error="check.uname.isErr"
+              :error-messages="check.uname.msg"
               :rules="[Rules.required, Rules.email]"
             ></v-text-field>
           </v-flex>
@@ -114,6 +120,7 @@
 
 <script>
 import Rules from '../public/rules'
+import api from '../../api'
 
 export default {
   name: 'login',
@@ -122,11 +129,21 @@ export default {
     tabs: ['login', 'register'],
     current: 'login',
     captchaURL: 'https://cas.baidu.com/?action=image',
-    name: '',
+    uname: '',
     email: '',
     pwd: '',
     pwdRe: '',
-    Rules
+    Rules,
+    check: {
+      uname: {
+        isErr: false,
+        msg: ''
+      },
+      email: {
+        isErr: false,
+        msg: ''
+      }
+    }
   }),
   methods: {
     selectTab (tab) {
@@ -136,8 +153,29 @@ export default {
       // this.$refs.captcha.src = `${backEnd}/api/captcha?` + Date.now()
       this.captchaURL = `https://cas.baidu.com/?action=image&random=${Date.now()}`
     },
+    // register
+    checkUnameF () {
+      api.check.uname({ uname: this.uname }).then((req) => {
+        if (req.status === 'failed') {
+          this.check.uname.isErr = true
+          this.check.uname.msg = req.msg
+        } else {
+          this.check.uname.isErr = false
+        }
+      })
+    },
+    checkEmailF () {
+      api.check.email({ email: this.email }).then((req) => {
+        if (req.status === 'failed') {
+          this.check.email.isErr = true
+          this.check.email.msg = req.msg
+        } else {
+          this.check.email.isErr = false
+        }
+      })
+    },
     handleLogin () {
-
+    //
     },
     handleRegister () {
       this.show = false

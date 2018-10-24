@@ -4,6 +4,8 @@ import * as types from './types'
 import theme from './modules/theme'
 import counter from './modules/counter'
 import message from './modules/message'
+import user from './modules/user'
+import session from './modules/session'
 
 Vue.use(Vuex)
 
@@ -48,6 +50,8 @@ export default new Vuex.Store({
   modules: {
     theme,
     counter,
-    message
+    message,
+    user,
+    session
   }
 })

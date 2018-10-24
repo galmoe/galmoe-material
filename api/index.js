@@ -74,6 +74,13 @@ const api = {
     getMessage: () => instance.get(`u/message`),
     getErrMessage: () => instance.get(`u/errmessage`)
   },
+  check: {
+    uname: (data) => instance.post(`u/check/uname`, data),
+    email: (data) => instance.post(`u/check/email`, data)
+  },
+  session: {
+    getInfo: () => instance.get(`u`)
+  },
   upload: (data) => instance.post(`upload`, data)
 }
 

@@ -16,7 +16,7 @@ const mutations = {
 }
 
 const actions = {
-  changeMsg ({ commit, data }) {
+  changeMsg ({ commit }, data) {
     commit(types.CHANGEMSG, data)
   },
   closeMsg ({ commit }) {

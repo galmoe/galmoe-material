@@ -6,7 +6,7 @@ const Rules = {
   length: (len) => v => (v || '').length === len || `输入长度必需为${len}`,
   pwd: v => (v || '').match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(_|[^\w])).+$/) ||
     'Password must contain an upper case letter, a numeric character, and a special character',
-  min: len => v => (v || '').length >= len || `字数必需大于${len}`,
+  min: len => v => (v || '').length >= len || `字数至少为${len}`,
   max: len => v => (v || '').length <= len || `字数必需小于${len}`
 }
 

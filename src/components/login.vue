@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" width="800px">
+  <v-dialog v-model="show" width="500px">
     <v-tabs
       fixed-tabs
       centered
@@ -54,64 +54,61 @@
     <v-card v-show="current==='register'">
       <v-container grid-list-sm class="pa-4">
         <v-layout row wrap>
-          <v-flex xs12>
-            <v-text-field
-              v-model.lazy="uname"
-              prepend-icon="account_circle"
-              label="昵称"
-              @change="checkUnameF"
-              :rules="[Rules.required, Rules.hasBlank, Rules.min(3), Rules.max(10)]"
-              :error="check.uname.isErr"
-              :error-messages="check.uname.msg"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs12>
-            <v-text-field
-              v-model.lazy="email"
-              prepend-icon="mail"
-              label="邮箱"
-              @change="checkEmailF"
-              :error="check.uname.isErr"
-              :error-messages="check.uname.msg"
-              :rules="[Rules.required, Rules.email]"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs6>
-            <v-text-field
-              v-model="pwd"
-              prepend-icon="lock"
-              label="密码"
-              type="password"
-              :rules="[Rules.required, Rules.min(8), Rules.max(20)]"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs6>
-            <v-text-field
-              v-model="pwdRe"
-              label="确认密码"
-              type="password"
-              :rules="[Rules.required, match]"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs6>
-            <v-text-field
-              label="验证码"
-              prepend-icon="verified_user"
-              :rules="[Rules.required, Rules.length(6)]"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs6>
+          <v-form ref="formR" v-model="validR" lazy-validation>
+              <v-text-field
+                v-model.lazy="uname"
+                prepend-icon="account_circle"
+                label="昵称"
+                @change="checkUnameF"
+                :rules="[Rules.required, Rules.hasBlank, Rules.min(3), Rules.max(10)]"
+                :error-messages="checkMsg.uname"
+                required
+              ></v-text-field>
+              <v-text-field
+                v-model.lazy="email"
+                prepend-icon="mail"
+                label="邮箱"
+                @change="checkEmailF"
+                :error-messages="checkMsg.email"
+                :rules="[Rules.required, Rules.email]"
+                required
+              ></v-text-field>
+              <v-text-field
+                v-model="pwd"
+                prepend-icon="lock"
+                label="密码"
+                type="password"
+                :rules="[Rules.required, Rules.min(8), Rules.max(20)]"
+                required
+              ></v-text-field>
+              <v-text-field
+                v-model.lazy="pwdRe"
+                prepend-icon="lock"
+                label="确认密码"
+                type="password"
+                :rules="[Rules.required]"
+                @change="checkPwdMatchF"
+                :error-messages="checkMsg.pwdMatch"
+                required
+              ></v-text-field>
+              <v-text-field
+                label="验证码"
+                prepend-icon="verified_user"
+                :rules="[Rules.required, Rules.length(6)]"
+                required
+              ></v-text-field>
             <img :src="captchaURL"
+                 ref="captcha"
                  @click="changeCaptcha"
                  alt="点击刷新"
                  title="点击刷新"
                  class="captcha">
-          </v-flex>
+          </v-form>
         </v-layout>
       </v-container>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn flat color="primary" @click="handleRegister">注册</v-btn>
+        <v-btn :disabled="!validR" @click="handleRegister">注册</v-btn>
         <v-btn flat @click.stop="handleCancel">取消</v-btn>
       </v-card-actions>
     </v-card>
@@ -121,28 +118,26 @@
 <script>
 import Rules from '../public/rules'
 import api from '../../api'
+import { backEnd } from '../../config'
 
 export default {
   name: 'login',
   props: ['visible'],
   data: () => ({
+    validR: true,
     tabs: ['login', 'register'],
     current: 'login',
-    captchaURL: 'https://cas.baidu.com/?action=image',
+    captchaURL: `${backEnd}/api/captcha`,
     uname: '',
     email: '',
     pwd: '',
     pwdRe: '',
+    captcha: '',
     Rules,
-    check: {
-      uname: {
-        isErr: false,
-        msg: ''
-      },
-      email: {
-        isErr: false,
-        msg: ''
-      }
+    checkMsg: {
+      uname: '',
+      email: '',
+      pwdMatch: ''
     }
   }),
   methods: {
@@ -150,47 +145,49 @@ export default {
       this.current = tab
     },
     changeCaptcha () {
-      // this.$refs.captcha.src = `${backEnd}/api/captcha?` + Date.now()
-      this.captchaURL = `https://cas.baidu.com/?action=image&random=${Date.now()}`
+      this.$refs.captcha.src = `${backEnd}/api/captcha?${Date.now()}`
     },
     // register
     checkUnameF () {
       api.check.uname({ uname: this.uname }).then((req) => {
-        if (req.status === 'failed') {
-          this.check.uname.isErr = true
-          this.check.uname.msg = req.msg
-        } else {
-          this.check.uname.isErr = false
-        }
+        this.checkMsg.uname = req.status === 'failed' ? '昵称已被注册' : ''
       })
     },
     checkEmailF () {
       api.check.email({ email: this.email }).then((req) => {
-        if (req.status === 'failed') {
-          this.check.email.isErr = true
-          this.check.email.msg = req.msg
-        } else {
-          this.check.email.isErr = false
-        }
+        this.checkMsg.email = req.status === 'failed' ? '邮箱已被注册' : ''
       })
+    },
+    checkPwdMatchF () {
+      if (this.pwd !== this.pwdRe && this.pwdRe.length) {
+        this.checkMsg.pwdMatch = '输入密码不一致'
+      } else {
+        this.checkMsg.pwdMatch = ''
+      }
     },
     handleLogin () {
     //
     },
     handleRegister () {
-      this.show = false
+      const data = {
+        uname: this.uname,
+        email: this.email,
+        pwd: this.pwd,
+        pwdRe: this.pwdRe,
+        captcha: this.captcha
+      }
+      if (this.$refs.formR.validate()) {
+        api.session.register(data).then(({ data }) => {
+          console.log(data)
+        })
+        this.show = false
+      }
     },
     handleCancel () {
       this.show = false
     }
   },
   computed: {
-    match () {
-      if (this.pwdRe !== this.pwd) {
-        return '输入密码不一致'
-      }
-      return ''
-    },
     show: {
       get () {
         return this.visible

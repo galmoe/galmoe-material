@@ -19,15 +19,11 @@ const instance = {}
         console.log(res.data)
         if (res.data.session) {
           console.log('res.data.profile', res.data.session)
-          // store.commit('session/UPDATE_SESSION', res.data.session)
+          store.commit('session/GETSESSIONINFO', res.data.session)
         }
         // 全局信息提示
         if (res.data.type && res.data.msg) {
           store.commit('message/CHANGEMSG', res.data)
-          // Vue.prototype.$Message[res.data.type]({
-          //   content: res.data.msg,
-          //   duration: 3
-          // })
         }
         return res.data
       })
@@ -76,10 +72,13 @@ const api = {
   },
   check: {
     uname: (data) => instance.post(`u/check/uname`, data),
-    email: (data) => instance.post(`u/check/email`, data)
+    email: (data) => instance.post(`u/check/email`, data),
   },
   session: {
-    getInfo: () => instance.get(`u`)
+    getInfo: () => instance.get(`s`),
+    login: (data) => instance.post(`s/login`, data),
+    logout: () => instance.post(`s/logout`),
+    register: (data) => instance.post(`s/register`, data)
   },
   upload: (data) => instance.post(`upload`, data)
 }

@@ -74,13 +74,9 @@ export default {
         outputType: 'webp',
         canScale: true,
         autoCrop: true,
-        // 只有自动截图开启 宽度高度才生效
-        // autoCropWidth: 1150,
-        // autoCropHeight: 500,
         // 开启宽度和高度比例
         fixed: true,
         fixedBox: false,
-        // fixedNumber: [1150, 500],
         uploadCbLink: ''
       },
       downImg: '#'

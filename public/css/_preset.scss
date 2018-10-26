@@ -193,17 +193,6 @@ nav.v-toolbar--fixed {
     }
   }
 }
-.message {
-  position: fixed;
-  display: flex;
-  top: 48px;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  .v-alert {
-    background: #fff;
-  }
-}
 .no-border {
   border: none!important;
 }

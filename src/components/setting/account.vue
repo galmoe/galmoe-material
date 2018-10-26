@@ -4,7 +4,8 @@
   <v-card ref="form">
     <v-card-text>
       <div class="avatar-upload-container clearfix">
-        <img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4" style="width: 150px; height: 150px;" alt="">
+        <img :src="(avatar_s ? avatar_s: 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/Akkarin.webp')"
+             style="width: 150px; height: 150px;">
         <label class="btn button-change-avatar text-center" @click="showUpload = true">Upload</label>
         <upload :containerMaxW="500" :containerMaxH="500" :visible="showUpload" @close="showUpload=false" :type="'avatar'" />
       </div>
@@ -41,6 +42,7 @@
 <script>
 import Rules from '../../public/rules'
 import upload from '@/components/upload'
+import { mapState } from 'vuex'
 
 export default {
   name: 'account',
@@ -58,7 +60,10 @@ export default {
         sign: this.sign,
         email: ''
       }
-    }
+    },
+    ...mapState({
+      avatar_s: state => state.session.avatar_s
+    })
   },
   methods: {
     submit () {
@@ -112,19 +117,5 @@ export default {
     margin-top: 16px;
     width: 150px;
     overflow: hidden;
-  }
-  .file-chooser {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 34px;
-    width: 100%;
-    padding: 0;
-    cursor: pointer;
-    opacity: 0.0001;
-  }
-  .cropper {
-    width: 100%;
-    height: 500px;
   }
 </style>

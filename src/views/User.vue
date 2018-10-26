@@ -36,10 +36,7 @@
                       <v-icon small class="un">more_vert</v-icon>
                     </v-btn>
                     <v-list>
-                      <v-list-tile @click="">
-                        <v-list-tile-title>删除</v-list-tile-title>
-                      </v-list-tile>
-                      <v-list-tile @click="">
+                      <v-list-tile @click="report">
                         <v-list-tile-title>举报</v-list-tile-title>
                       </v-list-tile>
                     </v-list>
@@ -117,6 +114,9 @@ export default {
     ...mapActions({
       getUserInfo: 'user/getUserInfo'
     }),
+    report () {
+      window.alert(this.$route.params.uid)
+    },
     onScroll (e) {
       this.offsetTop = window.pageYOffset || document.documentElement.scrollTop
       if (this.offsetTop >= 500) {

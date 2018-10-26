@@ -27,8 +27,6 @@
               @click="changeTheme"
             ></v-switch>
           </div>
-          <!--v-switch(:label="(!dark ? 'Light' : 'Dark') + ' Theme'", v-model="dark", :dark="dark", hide-details)-->
-          <!--div-->
         <hr :class="['v-divider',{'theme--dark': isDark}]">
         <template v-for="menu in menus">
           <v-layout
@@ -54,7 +52,6 @@
             <v-list-tile
               v-for="(child, i) in menu.children"
               :key="i"
-              @click="log"
               :to="child.href"
               :target="child.target"
             >
@@ -68,7 +65,7 @@
               </v-list-tile-content>
             </v-list-tile>
           </v-list-group>
-          <v-list-tile v-else :key="menu.text" @click="log" :to='menu.href'>
+          <v-list-tile v-else :key="menu.text" :to='menu.href'>
             <v-list-tile-action>
               <v-icon>{{ menu.icon }}</v-icon>
             </v-list-tile-action>
@@ -131,21 +128,21 @@
       <v-btn icon @click="handleShowSearch">
         <v-icon>search</v-icon>
       </v-btn>
-      <v-btn icon :to="'/publish'">
+      <v-btn icon :to="'/publish'" v-if="isLogined">
         <v-icon>send</v-icon>
       </v-btn>
-      <v-btn icon :to="'/notification'">
+      <v-btn icon :to="'/notification'" v-if="isLogined">
         <v-icon>notifications</v-icon>
       </v-btn>
       <!--TODO: login-->
-      <v-btn icon>
-        <v-icon @click.stop="showLogin=true">person</v-icon>
+      <v-btn icon v-if="!isLogined">
+        <v-icon @click.stop="showLogin">person</v-icon>
       </v-btn>
-      <v-menu bottom offset-y>
+      <v-menu bottom offset-y v-if="isLogined">
         <button slot="activator" type="button" class="v-btn v-btn--icon v-btn--large">
           <div class="v-avatar" style="height: 32px; width: 32px;">
-            <img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4"
-                 alt="Beats0">
+            <img :src="(avatar_s ? avatar_s : 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/Akkarin.webp')"
+                 :alt="name_s">
           </div>
         </button>
         <v-list>
@@ -169,7 +166,7 @@
       </v-card-actions>
     </v-footer>
     <toTop />
-    <login :visible="showLogin" @close="showLogin=false"/>
+    <login :visible="showLogin_s"/>
   </v-app>
 </template>
 
@@ -177,32 +174,51 @@
 import message from '@/components/message'
 import login from '@/components/login'
 import toTop from '@/components/to-top'
+import { hasUid } from '../public/utils'
 import userMenu from '@/public/userMenu'
-// import api from '../../api'
+import api from '../../api'
 // import adminMenu from '@/public/adminMenu'
 import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'layout',
   created () {
+    if (hasUid()) {
+      api.session.getInfo()
+    }
     // api.user.getMessage()
     // api.user.getErrMessage()
   },
   data: () => ({
     themeM: true,
-    showLogin: false,
     showSearch: false,
     q: '',
     drawer: null,
     userMenu: ['主页', '设置和安全', '退出']
   }),
+  computed: {
+    ...mapState({
+      theme: state => state.theme.theme,
+      showLogin_s: state => state.session.showLogin_s,
+      uid_s: state => state.session.uid_s,
+      name_s: state => state.session.name_s,
+      avatar_s: state => state.session.avatar_s
+    }),
+    ...mapGetters({
+      isDark: 'theme/isDark',
+      isLogined: 'session/isLogined'
+    }),
+    menus: function () {
+      // let profile = ''
+      // return profile === 'admin' ? adminMenu : userMenu
+      return userMenu
+    }
+  },
   methods: {
     ...mapActions({
-      changeTheme: 'theme/changeTheme'
+      changeTheme: 'theme/changeTheme',
+      showLogin: 'session/showLogin'
     }),
-    log () {
-      console.log(1)
-    },
     handleShowSearch () {
       this.showSearch = !this.showSearch
     },
@@ -211,11 +227,14 @@ export default {
     },
     userMenuSelect (item) {
       if (item === '主页') {
-        this.$router.push({ name: 'user', params: { uid: 1 } })
+        this.$router.push({ name: 'user', params: { uid: this.uid_s } })
       } else if (item === '设置和安全') {
         this.$router.push({ name: 'setting' })
       } else {
-        window.alert('you log out')
+        api.session.logout()
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
       }
     }
   },
@@ -223,19 +242,6 @@ export default {
     toTop,
     message,
     login
-  },
-  computed: {
-    ...mapState({
-      theme: state => state.theme.theme
-    }),
-    ...mapGetters({
-      isDark: 'theme/isDark'
-    }),
-    menus: function () {
-      // let profile = ''
-      // return profile === 'admin' ? adminMenu : userMenu
-      return userMenu
-    }
   }
 }
 </script>

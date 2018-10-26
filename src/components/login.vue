@@ -15,41 +15,32 @@
     <v-card v-show="current==='login'">
       <v-container grid-list-sm class="pa-4">
         <v-layout row wrap>
-          <v-flex xs12>
-            <v-text-field
-              prepend-icon="mail"
-              label="邮箱"
-              :rules="[Rules.required, Rules.email]"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs12>
-            <v-text-field
-              type="password"
-              prepend-icon="verified_user"
-              label="密码"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs6>
-            <v-text-field
-              label="验证码"
-              prepend-icon="update"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs6>
-            <img :src="captchaURL"
-                 @click="changeCaptcha"
-                 alt="点击刷新"
-                 title="点击刷新"
-                 class="captcha">
-          </v-flex>
+          <v-form ref="form" v-model="valid" lazy-validation>
+              <v-text-field
+                v-model.trim="email"
+                prepend-icon="mail"
+                label="邮箱"
+                :rules="[Rules.required, Rules.email]"
+                required
+              ></v-text-field>
+              <v-text-field
+                v-model.trim="pwd"
+                type="password"
+                prepend-icon="lock"
+                label="密码"
+                :rules="[Rules.required]"
+                required
+              ></v-text-field>
+              <v-text-field
+                v-model="captcha"
+                label="验证码"
+                prepend-icon="verified_user"
+                :rules="[Rules.required, Rules.length(6)]"
+                required
+              ></v-text-field>
+          </v-form>
         </v-layout>
       </v-container>
-      <v-card-actions>
-        <v-btn flat color="primary">More</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn flat color="primary" @click.stop="show=false">Cancel</v-btn>
-        <v-btn flat @click="dialog = false">Save</v-btn>
-      </v-card-actions>
     </v-card>
     <v-card v-show="current==='register'">
       <v-container grid-list-sm class="pa-4">
@@ -97,18 +88,22 @@
                 :rules="[Rules.required, Rules.length(6)]"
                 required
               ></v-text-field>
-            <img :src="captchaURL"
-                 ref="captcha"
-                 @click="changeCaptcha"
-                 alt="点击刷新"
-                 title="点击刷新"
-                 class="captcha">
           </v-form>
         </v-layout>
       </v-container>
+    </v-card>
+    <v-card>
+      <img :src="captchaURL"
+           v-if="show"
+           ref="captcha"
+           @click="changeCaptcha"
+           alt="点击刷新"
+           title="点击刷新"
+           class="captcha">
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn :disabled="!validR" @click="handleRegister">注册</v-btn>
+        <v-btn :disabled="!valid" @click="handleLogin" v-if="current==='login'">登录</v-btn>
+        <v-btn :disabled="!validR" @click="handleRegister" v-if="current==='register'">注册</v-btn>
         <v-btn flat @click.stop="handleCancel">取消</v-btn>
       </v-card-actions>
     </v-card>
@@ -119,11 +114,13 @@
 import Rules from '../public/rules'
 import api from '../../api'
 import { backEnd } from '../../config'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'login',
   props: ['visible'],
   data: () => ({
+    valid: true,
     validR: true,
     tabs: ['login', 'register'],
     current: 'login',
@@ -141,6 +138,9 @@ export default {
     }
   }),
   methods: {
+    ...mapActions({
+      closeLogin: 'session/closeLogin'
+    }),
     selectTab (tab) {
       this.current = tab
     },
@@ -166,7 +166,19 @@ export default {
       }
     },
     handleLogin () {
-    //
+      const data = {
+        email: this.email,
+        pwd: this.pwd,
+        captcha: this.captcha
+      }
+      if (this.$refs.form.validate()) {
+        api.session.login(data).then(({ session }) => {
+          if (session) {
+            this.$refs.form.reset()
+            this.show = false
+          }
+        })
+      }
     },
     handleRegister () {
       const data = {
@@ -177,9 +189,11 @@ export default {
         captcha: this.captcha
       }
       if (this.$refs.formR.validate()) {
-        api.session.register(data).then(({ data }) => {
-          console.log(data)
-        })
+        console.log(data)
+        // api.session.register(data).then(({ data }) => {
+        //   console.log(data)
+        // })
+        this.$refs.formR.reset()
         this.show = false
       }
     },
@@ -188,13 +202,16 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      showLogin_s: state => state.session.showLogin_s
+    }),
     show: {
       get () {
-        return this.visible
+        return this.showLogin_s
       },
       set (value) {
         if (!value) {
-          this.$emit('close')
+          this.closeLogin()
         }
       }
     }

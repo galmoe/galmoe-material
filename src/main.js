@@ -14,6 +14,19 @@ Vue.use(Viewer)
 
 Vue.config.productionTip = false
 
+// directives
+Vue.directive('permission-click', {
+  bind: (el, binding, vnode) => {
+    el.addEventListener('click', (e) => {
+      if (!store.getters['session/isLogined']) {
+        store.dispatch('session/SHOWLOGIN')
+      } else {
+        typeof binding.value === 'function' && binding.value()
+      }
+    })
+  }
+})
+
 new Vue({
   router,
   store,

@@ -1,38 +1,27 @@
 <template>
-  <div class="message">
-    <v-alert
-      :value="hasMsg"
-      dismissible
-      :color="type"
-      :icon="iconType"
-      outline
-      transition="fade-transition"
+  <v-snackbar
+    v-model="show"
+    top
+    :color="type"
+    :timeout="timeout"
+  >
+    {{ msg }}
+    <v-btn
+      flat
+      @click="closeMsg"
     >
-      {{ msg }}
-    </v-alert>
-
-    <!--<div class="text-xs-center">-->
-      <!--<v-btn-->
-        <!--v-if="!hasMsg"-->
-        <!--color="primary"-->
-        <!--dark-->
-        <!--@click="closeMsg"-->
-      <!--&gt;-->
-        <!--Reset-->
-      <!--</v-btn>-->
-    <!--</div>-->
-  </div>
+      <v-icon>close</v-icon>
+    </v-btn>
+  </v-snackbar>
 </template>
 
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
-  name: 'message',
   data () {
     return {
-      alert: true,
-      vtype: 'error'
+      timeout: 5000
     }
   },
   computed: {
@@ -41,9 +30,18 @@ export default {
       type: state => state.message.type
     }),
     ...mapGetters({
-      hasMsg: 'message/hasMsg',
-      iconType: 'message/iconType'
-    })
+      hasMsg: 'message/hasMsg'
+    }),
+    show: {
+      get () {
+        return this.hasMsg
+      },
+      set (value) {
+        if (!value) {
+          this.closeMsg()
+        }
+      }
+    }
   },
   methods: {
     ...mapActions({

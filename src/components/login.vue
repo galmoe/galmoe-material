@@ -51,7 +51,7 @@
                 prepend-icon="account_circle"
                 label="昵称"
                 @change="checkUnameF"
-                :rules="[Rules.required, Rules.hasBlank, Rules.min(3), Rules.max(10)]"
+                :rules="[Rules.required, Rules.hasBlank, Rules.min(1), Rules.max(10)]"
                 :error-messages="checkMsg.uname"
                 required
               ></v-text-field>
@@ -159,11 +159,7 @@ export default {
       })
     },
     checkPwdMatchF () {
-      if (this.pwd !== this.pwdRe && this.pwdRe.length) {
-        this.checkMsg.pwdMatch = '输入密码不一致'
-      } else {
-        this.checkMsg.pwdMatch = ''
-      }
+      this.checkMsg.pwdMatch = this.pwd === this.pwdRe ? '' : '输入密码不一致'
     },
     handleLogin () {
       const data = {
@@ -189,12 +185,12 @@ export default {
         captcha: this.captcha
       }
       if (this.$refs.formR.validate()) {
-        console.log(data)
-        // api.session.register(data).then(({ data }) => {
-        //   console.log(data)
-        // })
-        this.$refs.formR.reset()
-        this.show = false
+        api.session.register(data).then(({ session }) => {
+          if (session) {
+            this.$refs.formR.reset()
+            this.show = false
+          }
+        })
       }
     },
     handleCancel () {

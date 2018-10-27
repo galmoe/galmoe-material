@@ -1,39 +1,41 @@
 <template>
 <v-card>
   <div class="v-card__text"><h4>账户</h4></div>
-  <v-card ref="form">
-    <v-card-text>
-      <div class="avatar-upload-container clearfix">
-        <img :src="(avatar_s ? avatar_s: 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/Akkarin.webp')"
-             style="width: 150px; height: 150px;">
-        <label class="btn button-change-avatar text-center" @click="showUpload = true">Upload</label>
-        <upload :containerMaxW="500" :containerMaxH="500" :visible="showUpload" @close="showUpload=false" :type="'avatar'" />
-      </div>
-      <v-text-field
-        ref="name"
-        v-model="name"
-        :rules="[Rules.required, Rules.hasBlank, Rules.min(3), Rules.max(10)]"
-        label="昵称"
-      ></v-text-field>
-      <v-text-field
-        ref="sign"
-        :rules="[Rules.required, Rules.min(3), Rules.max(35)]"
-        v-model="sign"
-        label="签名"
-        counter="35"
-      ></v-text-field>
-      <v-text-field
-        ref="email"
-        v-model="email"
-        :rules="[Rules.required, Rules.email]"
-        label="邮箱"
-      ></v-text-field>
-    </v-card-text>
-    <v-divider class="mt-5"></v-divider>
+  <v-card>
+    <v-form ref="form" v-model="valid" lazy-validation>
+      <v-card-text>
+        <div class="avatar-upload-container clearfix">
+          <img :src="(avatar_s ? avatar_s: 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/Akkarin.webp')"
+               style="width: 150px; height: 150px;">
+          <label class="btn button-change-avatar text-center" @click="showUpload = true">Upload</label>
+          <upload :containerMaxW="500" :containerMaxH="500" :visible="showUpload" @close="showUpload=false" :type="'avatar'" />
+        </div>
+        <v-text-field
+          ref="uname"
+          v-model="uname"
+          :rules="[Rules.required, Rules.hasBlank, Rules.min(3), Rules.max(10)]"
+          label="昵称"
+          required
+        ></v-text-field>
+        <v-text-field
+          ref="sign"
+          :rules="[Rules.max(35)]"
+          v-model="sign"
+          label="签名"
+          counter="35"
+          required
+        ></v-text-field>
+        <v-text-field
+          ref="email"
+          v-model="email"
+          :rules="[Rules.required, Rules.email]"
+          label="邮箱"
+          required
+        ></v-text-field>
+      </v-card-text>
+    </v-form>
     <v-card-actions>
-      <v-btn flat>Cancel</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn color="primary" flat @click="submit">Submit</v-btn>
+      <v-btn block color="success" :disabled="!valid" @click="submit">确定</v-btn>
     </v-card-actions>
   </v-card>
 </v-card>
@@ -43,31 +45,46 @@
 import Rules from '../../public/rules'
 import upload from '@/components/upload'
 import { mapState } from 'vuex'
+import api from '../../../api'
 
 export default {
   name: 'account',
   data: () => ({
-    name: null,
+    uname: '',
     sign: '',
     email: '',
     Rules,
+    valid: true,
     showUpload: false
   }),
+  created () {
+    api.session.privateInfo().then(({ session }) => {
+      this.uname = session.uname
+      this.sign = session.sign
+      this.email = session.email
+    })
+  },
   computed: {
-    form () {
-      return {
-        name: this.name,
-        sign: this.sign,
-        email: ''
-      }
-    },
     ...mapState({
       avatar_s: state => state.session.avatar_s
     })
   },
   methods: {
     submit () {
-      window.alert('submit')
+      const data = {
+        uname: this.uname,
+        sign: this.sign,
+        email: this.email
+      }
+      if (this.$refs.form.validate()) {
+        api.session.update(data).then(({ type }) => {
+          if (type === 'success') {
+            setTimeout(() => {
+              window.location.reload()
+            }, 1500)
+          }
+        })
+      }
     }
   },
   components: {

@@ -7,7 +7,7 @@ Vue.use(Router)
 // page
 const Home = () => import(/* webpackChunkName: "Home" */ './views/Home.vue')
 const About = () => import(/* webpackChunkName: "About" */ './views/About.vue')
-const Article = () => import(/* webpackChunkName: "Article" */ './views/Article.vue')
+const Post = () => import(/* webpackChunkName: "Post" */ './views/Post.vue')
 const User = () => import(/* webpackChunkName: "User" */ './views/User.vue')
 const Notification = () => import(/* webpackChunkName: "User" */ './views/Notification.vue')
 const Setting = () => import(/* webpackChunkName: "Setting" */ './views/Setting.vue')
@@ -82,9 +82,9 @@ export default new Router({
       ]
     },
     {
-      path: '/article/:aid',
-      name: 'article',
-      component: Article
+      path: '/Post/:pid',
+      name: 'post',
+      component: Post
     },
     {
       path: '/upload',

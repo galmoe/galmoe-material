@@ -10,12 +10,12 @@
     <div id="related">
       <div class="related-item" v-for="(post, index) in posts" :key="index">
         <div class="s-thumb">
-          <router-link :to="{name: 'article', params:{aid: post.aid}}" class="thumb">
+          <router-link :to="{name: 'post', params:{pid: post.pid}}" class="thumb">
             <img :src="post.thumb" :alt="post.title">
           </router-link>
         </div>
         <div class="meta-container">
-          <router-link :to="{name: 'article', params:{aid: post.aid}}" :title="post.title" class="meta-title">{{post.title}}</router-link>
+          <router-link :to="{name: 'post', params:{pid: post.pid}}" :title="post.title" class="meta-title">{{post.title}}</router-link>
           <span class="meta-author"><v-icon small color="grey">person</v-icon><router-link :to="{name: 'user', params:{uid: post.uid}}" class="d-info d-author">{{post.uname}}</router-link></span>
           <span class="meta-item"><v-icon small color="grey">remove_red_eye</v-icon>&nbsp;233</span>
           <span class="meta-item"><v-icon small color="grey">thumb_up</v-icon>&nbsp;233</span>
@@ -45,7 +45,7 @@ export default {
       posts: [
         {
           title: 'title1 title1 title1title1 title1 title1 title1title1 title1 title1 title1title1',
-          aid: 1,
+          pid: 1,
           uname: 'Beats0Beats0Beats0Beats0Beats0',
           uid: 1,
           thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019607/9362470BA0D8CC701D2DD2C3A9331EB14AD13B64/',
@@ -54,7 +54,7 @@ export default {
         },
         {
           title: 'title2',
-          aid: 2,
+          pid: 2,
           uname: 'Beats0',
           uid: 1,
           thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019392/1AC565DD04AFE9CDBC650907AB45719D41EEB788/',
@@ -63,7 +63,7 @@ export default {
         },
         {
           title: 'some title',
-          aid: 3,
+          pid: 3,
           uname: 'Beats0',
           uid: 1,
           thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019206/A07E7B66D21F401D66C8FAF7E33A509582A1736B/',
@@ -72,7 +72,7 @@ export default {
         },
         {
           title: 'some title',
-          aid: 3,
+          pid: 3,
           uname: 'Beats0',
           uid: 1,
           thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525018984/4A9B8293970480323541BE309DD4300D9339C675/',
@@ -81,7 +81,7 @@ export default {
         },
         {
           title: 'some title',
-          aid: 3,
+          pid: 3,
           uname: 'Beats0',
           uid: 1,
           thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525014680/9BFA1439EFA7DF58FDE0A90BB805A10D15D5FBAA/',

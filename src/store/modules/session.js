@@ -1,5 +1,6 @@
 import * as type from '../types'
 import api from '../../../api'
+import { getCookie } from '../../public/utils'
 
 const state = {
   uid_s: '',
@@ -10,7 +11,6 @@ const state = {
 
 const mutations = {
   [type.GETSESSIONINFO] (state, user) {
-    console.log('user: ', user)
     state.uid_s = user.uid
     state.name_s = user.uname
     state.avatar_s = user.avatar
@@ -42,10 +42,14 @@ const actions = {
 
 const getters = {
   isLogined: state => {
-    if (typeof (state.uid_s) === 'number') {
-      return true
-    }
-    return false
+    return typeof (state.uid_s) === 'number'
+  },
+  isMyself: (state, rootGetters, rootState) => {
+    const cuid = Number(getCookie('cuid'))
+    return cuid === state.uid_s && rootState.user.uid === state.uid_s
+  },
+  isAdmin: state => {
+    return state.uid_s === 1
   }
 }
 

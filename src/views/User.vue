@@ -5,28 +5,27 @@
         <v-card class="h">
           <div class="v-parallax u">
             <div class="parallax-img-container">
-              <img
-                :src="background"
-                class="parallax-img"
-                :style="{top: `${offsetTop}px`}">
+              <img :src="(background ? background: 'https://ws1.sinaimg.cn/large/006nOlwNly1fwfzijcndvj315o0ogtgr.jpg')"
+                   class="parallax-img"
+                   :style="{top: `${offsetTop}px`}">
             </div>
             <div class="banner-editor">
-              <v-btn icon class="grey darken-2 white--text" @click="showUpload=true">
+              <v-btn icon class="grey darken-2 white--text" @click="showUpload=true" v-if="isMyself">
                 <v-icon>camera_alt</v-icon>
               </v-btn>
               <upload :containerMaxW="1155" :containerMaxH="550" :visible="showUpload" :autoCropWidth="1150" :fixedNumber="[1150, 500]" :type="'background'" @close="showUpload=false" />
             </div>
             <div class="u-info">
-              <a href="#" class="u-link">
-                <img :src="avatar" :alt="uname" class="u-avatar">
-              </a>
+              <router-link :to="(isMyself ? '/setting' : '#')" class="u-link">
+                <img :src="(avatar ? avatar : 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/Akkarin.webp')" :alt="uname" class="u-avatar">
+              </router-link>
               <div class="u-basic">
                 <div class="u-name">{{ uname }}</div>
                 <div class="u-sign-spacing">
                   <h4 :title="sign" class="u-sign">{{ sign }}</h4>
                 </div>
               </div>
-              <div class="u-action">
+              <div class="u-action" v-if="!isMyself">
                 <v-btn outline small><i aria-hidden="true" class="v-icon material-icons">add</i>&nbsp;关注</v-btn>
                 <v-btn outline small><i aria-hidden="true" class="v-icon material-icons">remove</i>&nbsp;取消关注</v-btn>
                 <v-btn outline small><i aria-hidden="true" class="v-icon material-icons">chat_bubble_outline</i>&nbsp;发消息</v-btn>
@@ -86,7 +85,7 @@
 
 <script>
 import upload from '@/components/upload'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'user',
@@ -99,7 +98,7 @@ export default {
     }
   },
   created () {
-    this.getUserInfo(this.uid)
+    this.fetchData()
   },
   computed: {
     ...mapState({
@@ -108,12 +107,18 @@ export default {
       avatar: state => state.user.avatar,
       sign: state => state.user.sign,
       background: state => state.user.background
+    }),
+    ...mapGetters({
+      isMyself: 'session/isMyself'
     })
   },
   methods: {
     ...mapActions({
       getUserInfo: 'user/getUserInfo'
     }),
+    fetchData () {
+      this.getUserInfo(this.$route.params.uid)
+    },
     report () {
       window.alert(this.$route.params.uid)
     },
@@ -128,6 +133,9 @@ export default {
   },
   components: {
     upload
+  },
+  watch: {
+    '$route': 'fetchData'
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-layout justify-start row wrap="wrap" grid-list-md="grid-list-md">
-      <v-flex xs12 md4 class="p-item" v-for="post in posts" :key="post.aid">
+      <v-flex xs12 md4 class="p-item" v-for="post in posts" :key="post.pid">
           <v-card class="my-4" hover>
             <v-card-title>
               <router-link :to="{name:'user',params:{uid: post.author.uid}}">
@@ -23,10 +23,10 @@
                   </div>
               </div>
             </v-card-title>
-            <router-link :to="{name:'article',params:{aid: post.aid}}" class="v-list__tile title-link">
+            <router-link :to="{name:'post',params:{pid: post.pid}}" class="v-list__tile title-link">
               {{ post.title }}
             </router-link>
-            <router-link :to="{name:'article',params:{aid: post.aid}}">
+            <router-link :to="{name:'post',params:{pid: post.pid}}">
               <v-img
                 class="white--text"
                 :src="post.thumb"
@@ -65,8 +65,13 @@
 </template>
 
 <script>
+import api from '../../api'
+
 export default {
   name: 'post',
+  created () {
+    api.post.list(this.$route.query)
+  },
   data () {
     return {
       card_text: 'Lorem ipsum dolor sit amet, brute iriure accusata ne mea. Eos suavitate referrentur ad, te duo agam libris qualisque, utroque quaestio accommodare no qui. Et percipit laboramus usu, no invidunt verterem nominati mel. Dolorem ancillae an mei, ut putant invenire splendide mel, ea nec propriae adipisci. Ignota salutandi accusamus in sed, et per malis fuisset, qui id ludus appareat.',
@@ -77,7 +82,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 1,
+          pid: 1,
           title: 'rick and monty',
           cateid: 6,
           cateName: 'anime',
@@ -90,7 +95,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 2,
+          pid: 2,
           title: 'eden*',
           cateid: 6,
           cateName: 'galgame',
@@ -103,7 +108,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 3,
+          pid: 3,
           title: 'some title',
           cateid: 3,
           cateName: 'some long text some long text some long text some long text ',
@@ -116,7 +121,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 4,
+          pid: 4,
           cateid: 3,
           cateName: 'anime',
           title: 'title',
@@ -129,7 +134,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 5,
+          pid: 5,
           title: 'title',
           cateid: 5,
           cateName: 'anime',
@@ -142,7 +147,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 10,
+          pid: 10,
           title: 'neko',
           cateid: 6,
           cateName: 'anime',
@@ -155,7 +160,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 11,
+          pid: 11,
           title: 'title',
           cateid: 6,
           cateName: 'anime',

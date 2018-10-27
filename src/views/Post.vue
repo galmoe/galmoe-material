@@ -43,7 +43,7 @@
             <v-breadcrumbs-item disabled>Rick and Morty</v-breadcrumbs-item>
           </v-breadcrumbs>
           <!--v-html-->
-          <v-card-text id="article-content" v-viewer class="images">
+          <v-card-text id="post-content" v-viewer class="images">
             <p>And that's how the family end up on the tiny planet in a small makeshift cabin. Everyone minus Rick was in the cabin watching a television Myra hand put together.</p>
             <p>"Well, it's official. The obscure planet known as earth, formerly the hiding place of interstellar terrorist and fugitive Rick Sanchez, has just become the 6,048th planet to join the galactic federation."</p>
             <p>"The plucky little ball of water and dirt, which is where it gets its name, is dominated by seven billion primate-descended natives who love to eat spaghetti and pray to kangaroos. Spaghetti, kangaroos? I've got to check this place out."</p>
@@ -149,12 +149,12 @@
           <div id="related">
             <div class="related-item" v-for="(s, i) in similar" :key="i">
               <div class="s-thumb">
-                <router-link :to="{ name: 'article', params: {aid: i} }">
+                <router-link :to="{ name: 'post', params: {pid: i} }">
                   <img :src="s.thumb" alt="">
                 </router-link>
               </div>
               <div class="meta-container">
-                <router-link :to="{ name: 'article', params: {aid: i} }" class="meta-title">{{ i }}</router-link>
+                <router-link :to="{ name: 'post', params: {pid: i} }" class="meta-title">{{ i }}</router-link>
                 <span class="meta-author"><v-icon small color="grey">person</v-icon><router-link :to="{ name: 'user', params: {uid: 1} }">Beats0</router-link></span>
                 <span class="meta-item"><v-icon small color="grey">remove_red_eye</v-icon>&nbsp;233</span>
                 <span class="meta-item"><v-icon small color="grey">thumb_up</v-icon>&nbsp;233</span>

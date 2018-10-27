@@ -101,7 +101,7 @@
               src="https://avatars1.githubusercontent.com/u/42090849?s=200&v=4" alt="galmoe material"></div>
           </router-link>
         </button>
-        <span class="hidden-sm-and-down"><a href="/" :class="[{'theme--dark': isDark},'site']">galmoe material</a></span>
+        <span class="hidden-sm-and-down"><router-link :to="'/'" :class="[{'theme--dark': isDark},'site']">galmoe material</router-link></span>
       </v-toolbar-title>
       <!--TODO: search layout-->
       <!--<v-text-field-->

@@ -44,9 +44,15 @@ const api = {
   },
   session: {
     getInfo: () => instance.get(`s`),
+    privateInfo: () => instance.get(`s/p`),
     login: (data) => instance.post(`s/login`, data),
     logout: () => instance.post(`s/logout`),
-    register: (data) => instance.post(`s/register`, data)
+    register: (data) => instance.post(`s/register`, data),
+    update: (data) => instance.put(`s/update`, data),
+    safety: (data) => instance.put(`s/safety`, data)
+  },
+  post: {
+    list: (data) => instance.get(`post`, { params: data })
   },
   upload: (data) => instance.post(`upload`, data)
 }

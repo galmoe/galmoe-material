@@ -2,6 +2,7 @@ import * as type from '../types'
 import api from '../../../api'
 
 const state = {
+  uid: '',
   uname: '',
   avatar: '',
   background: '',
@@ -10,6 +11,7 @@ const state = {
 
 const mutations = {
   [type.GETUSERINFO] (state, user) {
+    state.uid = user.uid
     state.uname = user.uname
     state.avatar = user.avatar
     state.background = user.background
@@ -37,9 +39,16 @@ const actions = {
   }
 }
 
+const getters = {
+  uid: state => {
+    return state.uid
+  }
+}
+
 export default {
   namespaced: true,
   state,
   actions,
-  mutations
+  mutations,
+  getters
 }

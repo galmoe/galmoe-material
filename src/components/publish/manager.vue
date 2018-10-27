@@ -4,12 +4,12 @@
     <div id="related">
       <div class="related-item" v-for="(post, index) in posts" :key="index">
         <div class="s-thumb">
-          <router-link :to="{name: 'article', params:{aid: post.aid}}" :title="post.title">
+          <router-link :to="{name: 'post', params:{pid: post.pid}}" :title="post.title">
             <img :src="post.thumb" :alt="post.title">
           </router-link>
         </div>
         <div class="meta-container">
-          <router-link :to="{name: 'article', params:{aid: post.aid}}" :title="post.title" class="meta-title">{{post.title}}</router-link>
+          <router-link :to="{name: 'post', params:{pid: post.pid}}" :title="post.title" class="meta-title">{{post.title}}</router-link>
           <span class="meta-item"><v-icon small color="grey">remove_red_eye</v-icon>&nbsp;233</span>
           <span class="meta-item"><v-icon small color="grey">thumb_up</v-icon>&nbsp;233</span>
           <span class="meta-item"><v-icon small color="grey">favorite</v-icon>233</span>
@@ -46,7 +46,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 1,
+          pid: 1,
           title: 'rick and monty',
           cateid: 6,
           cateName: 'anime',
@@ -59,7 +59,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 2,
+          pid: 2,
           title: 'eden*',
           cateid: 6,
           cateName: 'galgame',
@@ -72,7 +72,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 3,
+          pid: 3,
           title: 'some title',
           cateid: 3,
           cateName: 'some long text some long text some long text some long text ',
@@ -85,7 +85,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 4,
+          pid: 4,
           cateid: 3,
           cateName: 'anime',
           title: 'title',
@@ -98,7 +98,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 5,
+          pid: 5,
           title: 'title',
           cateid: 5,
           cateName: 'anime',
@@ -111,7 +111,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 10,
+          pid: 10,
           title: 'neko',
           cateid: 6,
           cateName: 'anime',
@@ -124,7 +124,7 @@ export default {
             uid: 1,
             avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
           },
-          aid: 11,
+          pid: 11,
           title: 'title',
           cateid: 6,
           cateName: 'anime',

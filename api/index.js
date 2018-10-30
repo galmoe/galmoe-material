@@ -54,6 +54,11 @@ const api = {
   post: {
     list: (data) => instance.get(`post`, { params: data })
   },
+  publish: {
+    edit: (data) => instance.get(`publish`, { params: data }),
+    publish: (data) => instance.post(`publish`, data)
+  },
+  fetchData: (data) => instance.get(`${data.type}`, { params: data }),
   upload: (data) => instance.post(`upload`, data)
 }
 

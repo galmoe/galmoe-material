@@ -58,17 +58,33 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      redirect: '/all',
+      component: Home,
+      meta: { type: 'post' }
     },
     {
-      path: '/category/:cateid',
+      path: '/all',
+      name: 'all',
+      component: Home,
+      meta: { type: 'post' }
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: Home,
+      meta: { type: 'search' }
+    },
+    {
+      path: '/category/:category',
       name: 'category',
-      component: Home
+      component: Home,
+      meta: { type: 'category' }
     },
     {
       path: '/tag/:tname',
       name: 'tag',
-      component: Home
+      component: Home,
+      meta: { type: 'tag' }
     },
     {
       path: '/notification',

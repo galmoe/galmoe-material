@@ -5,7 +5,7 @@
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-card-text>
         <div class="avatar-upload-container clearfix">
-          <img :src="(avatar_s ? avatar_s: 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/Akkarin.webp')"
+          <img :src="(avatar_s ? avatar_s: 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/akkarin.jpg')"
                style="width: 150px; height: 150px;">
           <label class="btn button-change-avatar text-center" @click="showUpload = true">Upload</label>
           <upload :containerMaxW="500" :containerMaxH="500" :visible="showUpload" @close="showUpload=false" :type="'avatar'" />

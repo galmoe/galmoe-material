@@ -28,8 +28,7 @@
 </template>
 
 <script>
-import { backEnd } from '../../config'
-import axios from 'axios'
+import axiosUpload from '../../api/upload'
 import { mapActions } from 'vuex'
 
 export default {
@@ -97,14 +96,9 @@ export default {
     },
     upload () {
       this.$refs.cropper.getCropBlob((data) => {
-        console.log(data)
-        const formData = new FormData()
+        let formData = new FormData()
         formData.append('file', new Blob([data]))
-        const config = {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true
-        }
-        axios.post(`${backEnd}/api/upload`, formData, config)
+        axiosUpload(formData)
           .then(res => {
             if (res.data.type === 'success') {
               const payload = {

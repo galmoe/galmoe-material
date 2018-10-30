@@ -141,7 +141,7 @@
       <v-menu bottom offset-y v-if="isLogined">
         <button slot="activator" type="button" class="v-btn v-btn--icon v-btn--large">
           <div class="v-avatar" style="height: 32px; width: 32px;">
-            <img :src="(avatar_s ? avatar_s : 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/Akkarin.webp')"
+            <img :src="(avatar_s ? avatar_s : 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/akkarin.jpg')"
                  :alt="name_s">
           </div>
         </button>
@@ -155,7 +155,7 @@
     <message />
     <v-content>
       <v-container fluid fill-height>
-        <v-layout align-center>
+        <v-layout>
           <router-view></router-view>
         </v-layout>
       </v-container>

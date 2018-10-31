@@ -23,7 +23,7 @@
           <div class="v-list__tile v-list__tile--avatar">
             <div class="v-list__tile__avatar">
               <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;">
-                <img src="https://lh3.googleusercontent.com/-c92Qaj1OmRk/AAAAAAAAAAI/AAAAAAAAAAA/AAN31DVoTBn2rvofY-V-iO-XgEzwDFbjlA/s64-c-mo/photo.jpg">
+                <img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4">
               </a>
             </div>
             <div class="v-list__tile__content">
@@ -44,7 +44,7 @@
           <div class="v-list__tile v-list__tile--avatar">
             <div class="v-list__tile__avatar">
               <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;"><img
-                src="https://lh3.googleusercontent.com/-c92Qaj1OmRk/AAAAAAAAAAI/AAAAAAAAAAA/AAN31DVoTBn2rvofY-V-iO-XgEzwDFbjlA/s64-c-mo/photo.jpg"></a>
+                src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4"></a>
             </div>
             <div class="v-list__tile__content">
               <div class="v-list-header">
@@ -94,7 +94,7 @@
                 <div class="v-list__tile v-list__tile--avatar">
                   <div class="v-list__tile__avatar">
                     <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;">
-                      <img src="https://lh3.googleusercontent.com/-c92Qaj1OmRk/AAAAAAAAAAI/AAAAAAAAAAA/AAN31DVoTBn2rvofY-V-iO-XgEzwDFbjlA/s64-c-mo/photo.jpg">
+                      <img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4">
                     </a>
                   </div>
                   <div class="v-list__tile__content">
@@ -117,7 +117,7 @@
                 <div class="v-list__tile v-list__tile--avatar">
                   <div class="v-list__tile__avatar">
                     <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;"><img
-                      src="https://lh3.googleusercontent.com/-c92Qaj1OmRk/AAAAAAAAAAI/AAAAAAAAAAA/AAN31DVoTBn2rvofY-V-iO-XgEzwDFbjlA/s64-c-mo/photo.jpg"></a>
+                      src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4"></a>
                   </div>
                   <div class="v-list__tile__content">
                     <div class="v-list-header">
@@ -154,29 +154,29 @@
                       </v-btn>1
                       <v-btn outline hover small class="no-border">回复</v-btn>
                     </div>
-                    <!--sub reply-->
-                    <div class="reply">
-                      <div class="v-list__tile v-list__tile--avatar">
-                        <div class="v-list__tile__avatar">
-                          <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;">
-                            <img src="https://lh3.googleusercontent.com/-c92Qaj1OmRk/AAAAAAAAAAI/AAAAAAAAAAA/AAN31DVoTBn2rvofY-V-iO-XgEzwDFbjlA/s64-c-mo/photo.jpg">
-                          </a>
-                        </div>
-                        <div class="v-list__tile__content">
-                          <v-textarea
-                            v-model="comment"
-                            auto-grow
-                            :rules="[Rules.required, Rules.blank, Rules.min(3), Rules.max(1000)]"
-                            counter="1000"
-                            label="发表评论"
-                            rows="1"
-                            append-icon="send"
-                            @click:append="submitComment"
-                          >
-                          </v-textarea>
-                        </div>
-                      </div>
-                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--secend reply-->
+              <div class="reply">
+                <div class="v-list__tile v-list__tile--avatar">
+                  <div class="v-list__tile__avatar">
+                    <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;">
+                      <img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4">
+                    </a>
+                  </div>
+                  <div class="v-list__tile__content">
+                    <v-textarea
+                      v-model="comment"
+                      auto-grow
+                      :rules="[Rules.required, Rules.blank, Rules.min(3), Rules.max(1000)]"
+                      counter="1000"
+                      label="发表评论"
+                      rows="1"
+                      append-icon="send"
+                      @click:append="submitComment"
+                    >
+                    </v-textarea>
                   </div>
                 </div>
               </div>
@@ -185,7 +185,7 @@
           <div class="v-list__tile v-list__tile--avatar">
             <div class="v-list__tile__avatar">
               <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;"><img
-                src="https://lh3.googleusercontent.com/-c92Qaj1OmRk/AAAAAAAAAAI/AAAAAAAAAAA/AAN31DVoTBn2rvofY-V-iO-XgEzwDFbjlA/s64-c-mo/photo.jpg"></a>
+                src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4"></a>
             </div>
             <div class="v-list__tile__content">
               <div class="v-list-header">
@@ -286,7 +286,7 @@ export default {
   }
   .v-list__tile--avatar {
     height: auto;
-    margin: 10px auto;
+    margin: 5px auto;
   }
   .v-list__tile {
     align-items: flex-start;

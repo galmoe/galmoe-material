@@ -98,7 +98,7 @@ export default new Router({
       ]
     },
     {
-      path: '/Post/:pid',
+      path: '/post/:pid',
       name: 'post',
       component: Post
     },

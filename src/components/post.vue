@@ -30,6 +30,7 @@
               <v-img
                 class="white--text"
                 :src="post.thumb"
+                v-if="post.thumb"
               >
             </v-img>
             </router-link>
@@ -39,13 +40,13 @@
             <v-card-actions>
               <v-btn icon small class="light-blue--text">
                 <v-icon small >thumb_up</v-icon>
-              </v-btn>{{ post.lv }}
+              </v-btn>{{ (post.lv ? post.lv : '') }}
               <v-btn icon small class="red--text lighten-3">
                 <v-icon small>favorite</v-icon>
-              </v-btn>{{ post.fv }}
+              </v-btn>{{ (post.fv ? post.fv : '') }}
               <v-btn icon small>
                 <v-icon small>chat</v-icon>
-              </v-btn>{{ post.cv }}
+              </v-btn>{{ (post.cv ? post.cv : '') }}
               <v-spacer></v-spacer>
               <v-btn flat small class="primary--text">more</v-btn>
             </v-card-actions>
@@ -75,100 +76,7 @@ export default {
   },
   data () {
     return {
-      card_text: 'Lorem ipsum dolor sit amet, brute iriure accusata ne mea. Eos suavitate referrentur ad, te duo agam libris qualisque, utroque quaestio accommodare no qui. Et percipit laboramus usu, no invidunt verterem nominati mel. Dolorem ancillae an mei, ut putant invenire splendide mel, ea nec propriae adipisci. Ignota salutandi accusamus in sed, et per malis fuisset, qui id ludus appareat.',
-      posts: [
-        {
-          author: {
-            uname: 'Beats0',
-            uid: 1,
-            avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
-          },
-          pid: 1,
-          title: 'rick and monty',
-          cateid: 6,
-          cateName: 'anime',
-          content: 'FUCK/LOVE YOU',
-          thumb: 'https://ws1.sinaimg.cn/large/006nOlwNly1fwg51fvtygj30if0okq4p.jpg'
-        }
-        // {
-        //   author: {
-        //     uname: 'Beats0',
-        //     uid: 1,
-        //     avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
-        //   },
-        //   pid: 2,
-        //   title: 'eden*',
-        //   cateid: 6,
-        //   cateName: 'galgame',
-        //   content: 'A tale of the planet\'s final love story told using the full force of minori\'s critically acclaimed illustrative style, engaging musical compositions, and the highly talented staff that has led fans coming back for more every single time!',
-        //   thumb: 'https://ws1.sinaimg.cn/large/006nOlwNgy1fp0v3noihrj337b29eu0x.jpg'
-        // },
-        // {
-        //   author: {
-        //     uname: 'Beats0 post.author.unamepost.author.unamepost.author.unamepost.author.unamepost.author.uname',
-        //     uid: 1,
-        //     avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
-        //   },
-        //   pid: 3,
-        //   title: 'some title',
-        //   cateid: 3,
-        //   cateName: 'some long text some long text some long text some long text ',
-        //   content: 'some content some content some content some content some content some content some content',
-        //   thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019607/9362470BA0D8CC701D2DD2C3A9331EB14AD13B64/'
-        // },
-        // {
-        //   author: {
-        //     uname: 'Beats0',
-        //     uid: 1,
-        //     avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
-        //   },
-        //   pid: 4,
-        //   cateid: 3,
-        //   cateName: 'anime',
-        //   title: 'title',
-        //   content: 'content',
-        //   thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019392/1AC565DD04AFE9CDBC650907AB45719D41EEB788/'
-        // },
-        // {
-        //   author: {
-        //     uname: 'Beats0',
-        //     uid: 1,
-        //     avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
-        //   },
-        //   pid: 5,
-        //   title: 'title',
-        //   cateid: 5,
-        //   cateName: 'anime',
-        //   content: '',
-        //   thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019206/A07E7B66D21F401D66C8FAF7E33A509582A1736B/'
-        // },
-        // {
-        //   author: {
-        //     uname: 'Beats0',
-        //     uid: 1,
-        //     avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
-        //   },
-        //   pid: 10,
-        //   title: 'neko',
-        //   cateid: 6,
-        //   cateName: 'anime',
-        //   content: '^.^',
-        //   thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525014680/9BFA1439EFA7DF58FDE0A90BB805A10D15D5FBAA/'
-        // },
-        // {
-        //   author: {
-        //     uname: 'Beats0',
-        //     uid: 1,
-        //     avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4'
-        //   },
-        //   pid: 11,
-        //   title: 'title',
-        //   cateid: 6,
-        //   cateName: 'anime',
-        //   content: 'content',
-        //   thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525018984/4A9B8293970480323541BE309DD4300D9339C675/'
-        // }
-      ],
+      posts: [],
       page: 1,
       total: 1
     }

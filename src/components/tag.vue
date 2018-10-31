@@ -1,6 +1,6 @@
 <template>
   <div class="tag-container">
-    <v-chip small outline color="primary" v-for="t in desserts" :key="t.tag" @click="goToTag(t.tag)">{{ t.tag }}</v-chip>
+    <v-chip small outline color="primary" v-for="t in tags" :key="t.tag" @click="goToTag(t.tag)">{{ t.tag }}</v-chip>
     <v-dialog v-model="dialogEdit" width="500px" scrollable>
       <v-chip small outline slot="activator" color="primary">编辑&nbsp;<i aria-hidden="true" class="v-icon material-icons">add</i></v-chip>
       <v-card>
@@ -18,7 +18,7 @@
         </div>
         <v-data-table
           :headers="headers"
-          :items="desserts"
+          :items="tags"
           hide-actions
           class="elevation-1"
         >
@@ -42,6 +42,11 @@
 import tagHis from '@/components/tag-history'
 
 export default {
+  props: {
+    tags: {
+      type: Array
+    }
+  },
   data () {
     return {
       tagIpt: '',
@@ -54,32 +59,6 @@ export default {
         },
         { text: '操作', sortable: false },
         { text: '处理', sortable: false }
-      ],
-      desserts: [
-        {
-          value: false,
-          tag: 'tag1'
-        },
-        {
-          value: false,
-          tag: 'tag2'
-        },
-        {
-          value: false,
-          tag: 'tag3'
-        },
-        {
-          value: false,
-          tag: 'tag4'
-        },
-        {
-          value: false,
-          tag: 'tag5'
-        },
-        {
-          value: false,
-          tag: 'tag6'
-        }
       ]
     }
   },
@@ -89,19 +68,19 @@ export default {
     },
     handleClickSubmit () {
       if (this.tagIpt.length >= 20) return
-      this.desserts.push({ value: false, tag: this.tagIpt })
+      this.tags.push({ value: false, tag: this.tagIpt })
       this.tagIpt = ''
     },
     handleSubmit () {
       if (this.tagIpt.length >= 20) return
-      this.desserts.push({ value: false, tag: this.tagIpt })
+      this.tags.push({ value: false, tag: this.tagIpt })
       this.tagIpt = ''
     },
     remove (item) {
-      this.desserts.splice(this.desserts.indexOf(item), 1)
+      this.tags.splice(this.tags.indexOf(item), 1)
     },
     report (item) {
-      console.log(this.desserts.indexOf(item))
+      console.log(this.tags.indexOf(item))
     }
   },
   components: {

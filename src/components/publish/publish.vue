@@ -8,8 +8,8 @@
       :rules="[Rules.required, Rules.max(40)]"
     ></v-text-field>
     <v-text-field
-      v-model="subTitle"
-      prepend-icon="subtitles"
+      v-model="sub_title"
+      prepend-icon="sub_titles"
       label="摘要(选填)"
       :rules="[Rules.max(40)]"
     ></v-text-field>
@@ -62,7 +62,10 @@
           ></v-text-field>
         </v-flex>
         <v-flex xs6>
-          <div class="v-card__text"><h4><v-icon small>send</v-icon>&nbsp;&nbsp;发布</h4></div>
+          <div class="v-card__text">
+            <h4><v-icon small>send</v-icon>&nbsp;&nbsp;发布</h4>
+            <h5 v-if="link"><a :href="link" target="_blank">已发布&nbsp;&nbsp;{{ title }} 至 {{ category }}, 点击查看</a></h5>
+          </div>
           <v-select
             prepend-icon="done_outline"
             v-model="category"
@@ -71,23 +74,6 @@
             label="分类"
             required
           ></v-select>
-          <v-layout row wrap>
-            <v-flex>
-              <v-text-field
-                label="验证码"
-                prepend-icon="verified_user"
-                :rules="[Rules.required, Rules.length(6)]"
-              ></v-text-field>
-            </v-flex>
-            <v-flex>
-              <img :src="captchaURL"
-                   ref="captcha"
-                   @click="changeCaptcha"
-                   alt="点击刷新"
-                   title="点击刷新"
-                   class="captcha">
-            </v-flex>
-          </v-layout>
           <v-btn block color="success" @click="submit">确定</v-btn>
         </v-flex>
       </v-layout>
@@ -122,10 +108,8 @@ export default {
       ],
       Rules,
       title: '',
-      subTitle: '',
+      sub_title: '',
       thumb: '',
-      captchaURL: `${backEnd}/api/captcha`,
-      captcha: '',
       mkdown: '',
       toolbars: {
         bold: true, // 粗体
@@ -168,7 +152,8 @@ export default {
         pwd: '',
         compressPwd: '',
         meta: ''
-      }
+      },
+      link: ''
     }
   },
   computed: {
@@ -219,15 +204,17 @@ export default {
     submit () {
       const data = {
         title: this.title,
-        subTitle: this.subTitle,
+        sub_title: this.sub_title,
         thumb: this.thumb,
         mkdown: this.mkdown,
         content: this.content,
-        category: this.categorySelected,
+        category: this.category,
         download: this.download
       }
       console.log(data)
-      api.publish.publish(data)
+      api.publish.publish(data).then(({ link }) => {
+        this.link = link
+      })
     }
   },
   components: {

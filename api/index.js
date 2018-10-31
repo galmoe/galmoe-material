@@ -52,7 +52,8 @@ const api = {
     safety: (data) => instance.put(`s/safety`, data)
   },
   post: {
-    list: (data) => instance.get(`post`, { params: data })
+    list: (data) => instance.get(`post`, { params: data }),
+    detail: (pid) => instance.get(`post/${pid}`)
   },
   publish: {
     edit: (data) => instance.get(`publish`, { params: data }),

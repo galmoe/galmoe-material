@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store/'
+import * as filters from './filters'
+import { timeFilter } from './public/utils'
 import Vuetify from 'vuetify'
 import vueCropper from 'vue-cropper'
 import Viewer from 'v-viewer'
@@ -13,6 +15,14 @@ Vue.use(vueCropper)
 Vue.use(Viewer)
 
 Vue.config.productionTip = false
+
+// filters
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
+Vue.filter('timeFilter', (date, limit) => {
+  return timeFilter(date, limit)
+})
 
 // directives
 Vue.directive('permission-click', {

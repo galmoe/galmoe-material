@@ -59,7 +59,6 @@ export default new Router({
       path: '/',
       name: 'home',
       redirect: '/all',
-      component: Home,
       meta: { type: 'post' }
     },
     {
@@ -113,7 +112,7 @@ export default new Router({
       component: User,
       redirect: '/u/:uid/home',
       children: [
-        { path: 'home', meta: { 'isSelect': true }, component: uHome },
+        { path: 'home', component: uHome },
         { path: 'post', component: uPost },
         { path: 'fav', component: fav },
         // { path: 'comment', component: comment },

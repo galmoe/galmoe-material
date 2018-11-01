@@ -32,7 +32,7 @@ const actions = {
   uploadCb ({ commit }, payload) {
     if (payload.type === 'background') {
       commit(type.UPLOADBACKGTOUND, payload.src)
-    } else {
+    } else if (payload.type === 'avatar') {
       // 更改session avatar
       commit('session/UPLOADAVATAR', payload.src, { root: true })
     }

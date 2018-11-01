@@ -1,0 +1,30 @@
+.thumb-uploader {
+  text-align: center;
+  max-height: 400px;
+  margin-bottom: 20px;
+  > img {
+    max-height: 300px;
+  }
+}
+
+.upload-img {
+  display: block;
+  margin: 0 auto;
+}
+.upload-container {
+  height: 200px;
+  margin: 0 auto;
+  text-align: center;
+  color: #99a2aa;
+  padding-top: 68px;
+  position: relative;
+  cursor: pointer;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  :hover {
+    border-color: #409eff;
+  }
+  > i {
+    font-size: 70px;
+  }
+}

@@ -34,9 +34,7 @@ const instance = {}
 
 const api = {
   user: {
-    getUserInfo: (uid) => instance.get(`u/${uid}`),
-    getMessage: () => instance.get(`u/message`),
-    getErrMessage: () => instance.get(`u/errmessage`)
+    getUserInfo: (uid) => instance.get(`u/${uid}`)
   },
   check: {
     uname: (data) => instance.post(`u/check/uname`, data),
@@ -53,7 +51,8 @@ const api = {
   },
   post: {
     list: (data) => instance.get(`post`, { params: data }),
-    detail: (pid) => instance.get(`post/${pid}`)
+    detail: (pid) => instance.get(`post/${pid}`),
+    download: (pid, data) => instance.post(`post/download/${pid}`, data)
   },
   publish: {
     edit: (data) => instance.get(`publish`, { params: data }),

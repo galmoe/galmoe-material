@@ -29,7 +29,6 @@
 
 <script>
 import axiosUpload from '../../api/upload'
-import { mapActions } from 'vuex'
 
 export default {
   props: {
@@ -61,7 +60,7 @@ export default {
     },
     type: {
       type: String,
-      default: 'avatar'
+      default: ''
     }
   },
   data: function () {
@@ -78,13 +77,11 @@ export default {
         fixedBox: false,
         uploadCbLink: ''
       },
+      src: '',
       downImg: '#'
     }
   },
   methods: {
-    ...mapActions({
-      uploadCb: 'user/uploadCb'
-    }),
     handleCancel () {
       this.show = false
     },
@@ -97,15 +94,12 @@ export default {
     upload () {
       this.$refs.cropper.getCropBlob((data) => {
         let formData = new FormData()
-        formData.append('file', new Blob([data]))
+        formData.append('img', new Blob([data]))
+        formData.append('type', this.type)
         axiosUpload(formData)
           .then(res => {
             if (res.data.type === 'success') {
-              const payload = {
-                src: res.data.src,
-                type: this.type
-              }
-              this.uploadCb(payload)
+              this.$emit('uploadCb', res.data.src)
               this.show = false
             }
           })

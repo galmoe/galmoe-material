@@ -13,7 +13,7 @@
               <v-btn icon class="grey darken-2 white--text" @click="showUpload=true" v-if="isMyself">
                 <v-icon>camera_alt</v-icon>
               </v-btn>
-              <upload :containerMaxW="1155" :containerMaxH="550" :visible="showUpload" :autoCropWidth="1150" :fixedNumber="[1150, 500]" :type="'background'" @close="showUpload=false" />
+              <upload :containerMaxW="1155" :containerMaxH="550" :autoCropWidth="1150" :fixedNumber="[1150, 500]" :visible="showUpload" @close="showUpload=false" @uploadCb="getSrc" :type="'background'" />
             </div>
             <div class="u-info">
               <router-link :to="(isMyself ? '/setting' : '#')" class="u-link">
@@ -114,8 +114,16 @@ export default {
   },
   methods: {
     ...mapActions({
-      getUserInfo: 'user/getUserInfo'
+      getUserInfo: 'user/getUserInfo',
+      uploadCb: 'user/uploadCb'
     }),
+    getSrc (src) {
+      const payload = {
+        src,
+        type: 'background'
+      }
+      this.uploadCb(payload)
+    },
     fetchData () {
       this.getUserInfo(this.$route.params.uid)
     },

@@ -217,3 +217,11 @@ nav.v-toolbar--fixed {
   margin: 0 auto;
   cursor: pointer;
 }
+.avatar-upload-container {
+  width: 150px;
+  overflow: hidden;
+  > button {
+    margin: 10px auto;
+    width: 150px;
+  }
+}

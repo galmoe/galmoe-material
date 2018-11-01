@@ -14,8 +14,8 @@
               <h2>{{ post.title }}</h2>
               <h4>{{ post.sub_title }}</h4>
               <div class="meta-box">
-                <time datetime="2018-10-08T06:51:34.734Z" title="Mon Oct 08 2018 14:51:34 GMT+0800 (中国标准时间)" class="time">2018年10月08日</time>
-                <span class="count">阅读 {{ post.pv }}</span>
+                <time :title="post.date" class="time">{{ post.date | timeFilter }}</time>
+                <span class="count">阅读 {{ post.pv | formatNumber }}</span>
               </div>
               <hr :class="['v-divider', `theme--${theme}`]">
             </v-card-text>
@@ -27,7 +27,7 @@
               </div>
               <div class="v-list__tile__content">
                 <div class="v-list__tile__title">
-                  <router-link :to="{ name: 'user', params: {uid: post.uid} }">Beats0</router-link>
+                  <router-link :to="{ name: 'user', params: {uid: post.uid} }">{{ post.uname }}</router-link>
                 </div>
               </div>
               <div class="v-list__tile__action">
@@ -45,64 +45,62 @@
           <!--v-html-->
           <v-card-text id="post-content" v-viewer class="images" v-html="post.content"></v-card-text>
           <!--download-->
-          <div class="v-card__text" v-if="post.link"><h4>下载</h4></div>
-          <hr :class="['v-divider', `theme--${theme}`]" v-if="post.link">
-          <v-layout row wrap v-if="post.link">
-            <v-flex xs6>
-              <div class="download-container">
+          <div class="v-card__text" v-if="hasDownload"><h4>下载</h4></div>
+          <hr :class="['v-divider', `theme--${theme}`]" v-if="hasDownload">
+          <v-layout row wrap v-if="hasDownload">
+            <v-flex xs6 v-if="!showDownload">
                 <v-text-field
-                  v-model="captchaIpt"
+                  v-model="captcha"
                   outline
                   label="验证码"
                   append-icon="send"
                   @click:append="captcha_cb"
+                  @keyup.enter="captcha_cb"
                 ></v-text-field>
-                <v-btn outline color="green" @click="openLink">
-                  <i aria-hidden="true" class="v-icon material-icons">cloud_download</i>下载
-                </v-btn>
-                  <v-tooltip top>
-                    <v-btn outline color="success" slot="activator">提取码</v-btn>
-                    <span>复制</span>
-                  </v-tooltip>
-                <v-tooltip top>
-                  <v-btn outline color="success" slot="activator">解压码</v-btn>
-                  <span>复制</span>
-                </v-tooltip>
-              </div>
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs6 v-if="!showDownload">
               <img :src="captchaURL"
                    ref="captcha"
                    @click="changeCaptcha"
                    alt="点击刷新"
-                   title="点击刷新"
-                   class="captcha">
+                   title="点击刷新">
+            </v-flex>
+            <v-flex v-if="showDownload">
+              <div class="download-container">
+                <v-tooltip top>
+                  <v-btn outline color="success" slot="activator" @click="openLink"><i aria-hidden="true" class="v-icon material-icons">cloud_download</i>下载</v-btn>
+                  <span>下载</span>
+                </v-tooltip>
+                <v-tooltip top>
+                  <v-btn outline color="success" slot="activator" @click="copy(download.pwd)">提取码</v-btn>
+                  <span>复制</span>
+                </v-tooltip>
+                <v-tooltip top>
+                  <v-btn outline color="success" slot="activator"  @click="copy(download.compress)">解压码</v-btn>
+                  <span>复制</span>
+                </v-tooltip>
+              </div>
             </v-flex>
           </v-layout>
           <!--info-->
-          <div class="v-card__text"><h4>备注</h4></div>
-          <hr :class="['v-divider', `theme--${theme}`]">
-          <v-card-text>
-            <p>第二季</p>
-            <p>pan.baidu.com/s/1GQRQuBfBJYFHsQx0XmOKoQ</p>
-            <p>第三季</p>
-            <p>pan.baidu.com/s/1bZ797CUSpfxc5j-vSTMYqw</p>
-          </v-card-text>
+          <div class="v-card__text" v-if="post.meta"><h4>备注</h4></div>
+          <hr :class="['v-divider', `theme--${theme}`]" v-if="post.meta">
+          <v-card-text v-html="post.meta" v-if="post.meta"></v-card-text>
           <!--action-->
           <v-card-actions>
             <v-btn icon :outline="!isLike" @click="like_cb">
               <v-icon :class="[{'light-blue--text': isLike}]">thumb_up</v-icon>
-            </v-btn>&nbsp;{{ like }}&nbsp;
+            </v-btn>&nbsp;{{ post.lv }}&nbsp;
             <v-btn icon :outline="!isFav" @click="fav_cb">
               <v-icon :class="[{'red--text lighten-3': isFav}]">favorite</v-icon>
-            </v-btn>&nbsp;{{ fav }}&nbsp;
+            </v-btn>&nbsp;{{ post.fv }}&nbsp;
             <v-spacer></v-spacer>
             <v-menu offset-y>
               <v-btn flat slot="activator">
                 more
               </v-btn>
               <v-list>
-                <v-list-tile @click="">
+                <v-list-tile @click="report">
                   <v-list-tile-title>举报</v-list-tile-title>
                 </v-list-tile>
               </v-list>
@@ -150,7 +148,8 @@
 import tag from '@/components/tag'
 import comment from '@/components/comment'
 import Rules from '../public/rules'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+import { copy } from '../public/utils'
 import api from '../../api'
 import { backEnd } from '../../config'
 import 'viewerjs/dist/viewer.css'
@@ -165,6 +164,13 @@ export default {
       post: {},
       Rules,
       pid: this.$route.params.pid,
+      download: {
+        link: '',
+        pwd: '',
+        compress: ''
+      },
+      hasDownload: false,
+      showDownload: false,
       like: 233,
       isLike: false,
       fav: 233,
@@ -172,9 +178,6 @@ export default {
       captcha: '',
       captchaURL: `${backEnd}/api/captcha`,
       offsetTop: 0,
-      captchaIpt: '',
-      showLink: false,
-      link: 'https://pan.baidu.com/s/1bZ797CUSpfxc5j-vSTMYqw',
       similar: [
         { thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019127/DA6093ACF7035120832A27484995AEF0C04B091F/' },
         { thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019316/2E074CB8784B2CB98F2EEDC039120BD0DC82831E/' },
@@ -191,49 +194,64 @@ export default {
     })
   },
   methods: {
+    ...mapActions({
+      showMsg: 'message/showMsg'
+    }),
     fetchData () {
       api.post.detail(this.$route.params.pid).then(({ data }) => {
         this.post = data
+        this.hasDownload = data.download
       })
     },
     onScroll (e) {
       this.offsetTop = window.pageYOffset || document.documentElement.scrollTop
     },
     captcha_cb () {
-      if (this.captchaIpt === this.captcha) {
-        this.showLink = true
-      } else {
-        window.alert('captcha error')
+      const data = {
+        captcha: this.captcha
       }
+      api.post.download(this.$route.params.pid, data).then(({ data }) => {
+        if (data) {
+          this.download = { ...data }
+          this.showDownload = true
+        }
+      })
     },
     changeCaptcha () {
       this.$refs.captcha.src = `${backEnd}/api/captcha?${Date.now()}`
     },
     openLink () {
       const re = /^http/
-      if (re.test(this.link)) {
-        window.open(this.link)
+      if (re.test(this.download.link)) {
+        window.open(this.download.link)
       } else {
-        window.open(`https://${this.link}`)
+        window.open(`https://${this.download.link}`)
       }
+    },
+    copy (val) {
+      copy(val)
+      this.showMsg({ type: 'success', msg: '复制成功' })
     },
     like_cb () {
       if (this.isLike) {
         this.isLike = false
-        this.like--
+        this.post.lv--
       } else {
         this.isLike = true
-        this.like++
+        this.post.lv++
       }
     },
     fav_cb () {
       if (this.isFav) {
         this.isFav = false
-        this.fav--
+        this.post.fv--
       } else {
         this.isFav = true
-        this.fav++
+        this.post.fv++
       }
+    },
+    report () {
+      window.alert('report')
     }
   },
   components: {

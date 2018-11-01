@@ -14,19 +14,16 @@
       :rules="[Rules.max(40)]"
     ></v-text-field>
     <div class="thumb-uploader">
-      <div class="upload-container" v-show="showThumbLabel">
+      <upload :containerMaxW="1155" :containerMaxH="550" :autoCropWidth="1150" :fixedNumber="[1150, 500]" :visible="showUpload" @close="showUpload=false" :type="'thumb'" @uploadCb="getSrc" />
+      <div class="upload-container" v-show="showThumbLabel" @click="showUpload = true">
         <v-icon>add_photo_alternate</v-icon>
+        <p>支持2MB内的JPG／JPEG／BMP／PNG格式的高清图片</p>
+        <p>建议大于960*540像素</p>
       </div>
-      <img :src="thumb" alt="" v-if="thumb">
-      <div>
-        <label class="btn button-upload text-center">
-          选择
-          <input type="file" accept="image/jpeg, image/jpg, image/png, image/bmp" class="file-chooser" ref="thumb">
-        </label>
-        <label class="btn button-upload btn-success text-center" @click="upload">
-          确定
-        </label>
-      </div>
+      <img :src="thumb" v-if="thumb" class="upload-img">
+      <v-btn outline @click="showUpload = true">
+        <i aria-hidden="true" class="v-icon material-icons">cloud_upload</i>上传封面
+      </v-btn>
     </div>
     <mavonEditor  v-model="mkdown"
                   ref=md
@@ -51,7 +48,7 @@
             label="提取码"
           ></v-text-field>
           <v-text-field
-            v-model="download.compressPwd"
+            v-model="download.compress"
             prepend-icon="lock_open"
             label="解压码"
           ></v-text-field>
@@ -82,12 +79,14 @@
 </template>
 
 <script>
+import upload from '@/components/upload'
 import Rules from '../../public/rules'
 import { backEnd } from '../../../config'
 import api from '../../../api'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import axiosUpload from '../../../api/upload'
+
 export default {
   name: 'publish',
   created () {
@@ -98,6 +97,7 @@ export default {
   },
   data () {
     return {
+      showUpload: false,
       showThumbLabel: true,
       category: null,
       categories: [
@@ -150,7 +150,7 @@ export default {
       download: {
         link: '',
         pwd: '',
-        compressPwd: '',
+        compress: '',
         meta: ''
       },
       link: ''
@@ -162,24 +162,15 @@ export default {
     }
   },
   methods: {
+    getSrc (src) {
+      this.showThumbLabel = false
+      this.thumb = src
+    },
     getContent (val, render) {
       this.content = render
     },
     changeCaptcha () {
       this.$refs.captcha.src = `${backEnd}/api/captcha?${Date.now()}`
-    },
-    upload: function () {
-      let f = this.$refs.thumb
-      console.dir(f.files[0])
-      let formData = new FormData()
-      formData.append('img', f.files[0])
-      axiosUpload(formData)
-        .then(res => {
-          if (res.data.type === 'success') {
-            this.showThumbLabel = false
-            this.thumb = res.data.src
-          }
-        })
     },
     imgAdd (pos, $file) {
       let formData = new FormData()
@@ -209,6 +200,7 @@ export default {
         mkdown: this.mkdown,
         content: this.content,
         category: this.category,
+        compress: this.compress,
         download: this.download
       }
       console.log(data)
@@ -218,91 +210,9 @@ export default {
     }
   },
   components: {
-    mavonEditor
+    mavonEditor,
+    upload
   }
 }
 
 </script>
-
-<style scoped>
-  .thumb-uploader {
-    text-align: center;
-    max-height: 400px;
-    margin-bottom: 20px;
-  }
-  .thumb-uploader > img {
-    max-height: 300px;
-  }
-  .upload-container {
-    height: 200px;
-    width: 200px;
-    margin: 0 auto;
-    text-align: center;
-    color: #99a2aa;
-    padding-top: 68px;
-    position: relative;
-    cursor: pointer;
-    background: #f5f4f4;
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-  }
-  .upload-container:hover {
-    border-color: #409eff;
-  }
-  .upload-container > i {
-    font-size: 70px;
-  }
-  .btn {
-    position: relative;
-    display: inline-block;
-    padding: 6px 12px;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    line-height: 20px;
-    white-space: nowrap;
-    vertical-align: middle;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    background-repeat: repeat-x;
-    background-position: -1px -1px;
-    background-size: 110% 110%;
-    border: 1px solid rgba(27,31,35,0.2);
-    border-radius: 0.25em;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    color: #24292e;
-    background-color: #eff3f6;
-    background-image: linear-gradient(-180deg,#fafbfc,#eff3f6 90%);
-  }
-  .btn:hover {
-    background-color: #e6ebf1;
-    background-image: linear-gradient(-180deg,#f0f3f6,#e6ebf1 90%);
-    background-position: -0.5em;
-    border-color: rgba(27,31,35,0.35);
-  }
-  .button-upload {
-    margin-top: 16px;
-    width: 100px;
-    margin-right: 10px;
-    overflow: hidden;
-  }
-  .btn-success {
-    color: #fff;
-    background-color: #28a745;
-    background-image: linear-gradient(-180deg,#34d058,#28a745 90%);
-  }
-  .btn-success:hover {
-    background-color: #269f42;
-    background-image: linear-gradient(-180deg,#2fcb53,#269f42 90%);
-    background-position: -0.5em;
-    border-color: rgba(27,31,35,0.5);
-  }
-  .file-chooser {
-    display: none;
-  }
-</style>

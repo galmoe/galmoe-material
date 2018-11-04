@@ -34,7 +34,18 @@ const instance = {}
 
 const api = {
   user: {
-    getUserInfo: (uid) => instance.get(`u/${uid}`)
+    getUserInfo: (uid) => instance.get(`u/info/${uid}`),
+    post: (data) => instance.get(`u/post`, { params: data }),
+    fav: (data) => instance.get(`u/fav}`, { params: data }),
+    comment: (data) => instance.get(`u/comment}`, { params: data }),
+    addComment: (data) => instance.post(`u/comment`, data),
+    removeComment: (data) => instance.delete(`u/comment`, { params: data }),
+    about: (data) => instance.get(`u/about`, { params: data }),
+    updateAbout: (data) => instance.put(`u/about`, { params: data }),
+    following: (data) => instance.get(`u/following`, { params: data }),
+    addFollowing: (data) => instance.put(`u/following`, { params: data }),
+    removeFollowing: (data) => instance.delete(`u/post`, { params: data }),
+    follower: (data) => instance.get(`u/follower`, { params: data })
   },
   check: {
     uname: (data) => instance.post(`u/check/uname`, data),
@@ -52,7 +63,9 @@ const api = {
   post: {
     list: (data) => instance.get(`post`, { params: data }),
     detail: (pid) => instance.get(`post/${pid}`),
-    download: (pid, data) => instance.post(`post/download/${pid}`, data)
+    download: (pid, data) => instance.post(`post/download/${pid}`, data),
+    addTag: (pid, data) => instance.post(`post/tag/${pid}`, data),
+    removeTag: (pid, data) => instance.delete(`post/tag/${pid}`, { params: data })
   },
   publish: {
     edit: (data) => instance.get(`publish`, { params: data }),

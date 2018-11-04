@@ -9,6 +9,9 @@
   max-width: 1155px;
   overflow: auto;
   white-space: nowrap;
+  .no-data {
+    margin: 0 auto;
+  }
 }
 .item {
   display: inline-block;
@@ -22,6 +25,7 @@
     flex: 0 0 auto;
     height: 126.5px;
     width: 230px;
+    overflow: hidden;
   }
   .detail {
     cursor: pointer;

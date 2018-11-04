@@ -18,9 +18,12 @@
           <div class="detail-spacing">
             <router-link :to="{name: 'post', params:{pid: post.pid}}" :title="post.title" class="d-title">{{post.title}}</router-link>
             <router-link :to="{name: 'user', params:{uid: post.uid}}" class="d-info d-author">{{post.uname}}</router-link>
-            <span class="d-info">{{post.t}}</span>
+            <span class="d-info">{{ post.date | timeFilter }}</span>
           </div>
         </div>
+      </div>
+      <div v-if="posts.length === 0" class="no-data">
+        <img src="https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/nodata.png" alt="">
       </div>
     </div>
     <hr :class="['v-divider', `theme--${theme}`]">
@@ -32,7 +35,7 @@
         </v-btn></router-link></h4>
     </div>
     <div class="content-container">
-      <div class="item" v-for="(post, index) in posts" :key="index">
+      <div class="item" v-for="(post, index) in favs" :key="index">
         <div class="thumb">
           <router-link :to="{name: 'post', params:{pid: post.pid}}" class="thumb">
             <img :src="post.thumb" :alt="post.title" :title="post.title">
@@ -42,9 +45,12 @@
           <div class="detail-spacing">
             <router-link :to="{name: 'post', params:{pid: post.pid}}" :title="post.title" class="d-title">{{post.title}}</router-link>
             <router-link :to="{name: 'user', params:{uid: post.uid}}" class="d-info d-author">{{post.uname}}</router-link>
-            <span class="d-info">{{post.t}}</span>
+            <span class="d-info">{{ post.date | timeFilter }}</span>
           </div>
         </div>
+      </div>
+      <div v-if="favs.length === 0" class="no-data">
+        <img src="https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/nodata.png" alt="">
       </div>
     </div>
     <hr :class="['v-divider', `theme--${theme}`]">
@@ -127,69 +133,26 @@
 
 <script>
 import Rules from '../../public/rules'
+import api from '../../../api'
 import { mapState } from 'vuex'
 
 export default {
   name: 'home',
+  created () {
+    this.fetchData()
+  },
   data () {
     return {
       Rules,
       comment: '',
-      posts: [
-        {
-          title: 'title1 title1 title1title1 title1 title1 title1title1 title1 title1 title1title1',
-          pid: 1,
-          uname: 'Beats0Beats0Beats0Beats0Beats0',
-          uid: 1,
-          thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019607/9362470BA0D8CC701D2DD2C3A9331EB14AD13B64/',
-          v: 233,
-          t: '2018-03-22',
-          content: 'some content some content some content some content some content some content some content some content some content some content some content some content '
-        },
-        {
-          title: 'title2',
-          pid: 2,
-          uname: 'Beats0',
-          uid: 1,
-          thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019392/1AC565DD04AFE9CDBC650907AB45719D41EEB788/',
-          v: 233,
-          t: 2018,
-          content: 'some content some content some content some content some content some content some content some content some content some content some content some content '
-        },
-        {
-          title: 'some title',
-          pid: 3,
-          uname: 'Beats0',
-          uid: 1,
-          thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019206/A07E7B66D21F401D66C8FAF7E33A509582A1736B/',
-          v: 233,
-          t: 2018
-        },
-        {
-          title: 'some title',
-          pid: 3,
-          uname: 'Beats0',
-          uid: 1,
-          thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525018984/4A9B8293970480323541BE309DD4300D9339C675/',
-          v: 233,
-          t: 2018
-        },
-        {
-          title: 'some title',
-          pid: 3,
-          uname: 'Beats0',
-          uid: 1,
-          thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525014680/9BFA1439EFA7DF58FDE0A90BB805A10D15D5FBAA/',
-          v: 233,
-          t: 2018
-        }
-      ],
+      posts: [],
+      favs: [],
       data: [
         { uid: 1, uname: 'Beats0', avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4', t: '2018-02-03', content: 'some comment here' },
         { uid: 2, uname: 'Beats0', avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4', t: '2018-02-03', content: 'some comment here' },
         { uid: 3, uname: 'Beats0', avatar: 'https://avatars0.githubusercontent.com/u/29087203?s=460&v=4', t: '2018-02-03', content: 'some comment here' }
       ],
-      page: 2
+      page: 1
     }
   },
   computed: {
@@ -198,12 +161,33 @@ export default {
     })
   },
   methods: {
+    fetchData () {
+      const data = {
+        uid: this.$route.params.uid,
+        count: 5
+      }
+      api.user.post(data).then(({ data }) => {
+        this.posts = data.posts
+      })
+    },
+    pageChange () {
+      this.$router.push({
+        name: 'home',
+        query: {
+          page: this.page
+        }
+      })
+      this.$vuetify.goTo(0)
+    },
     submitComment () {
       if ((this.comment || '').length <= 3) return
       if ((this.comment || '').length > 1000) return
       if ((/^\s*$/).test(this.comment)) return
       console.log('submitComment', this.comment)
     }
+  },
+  watch: {
+    '$router': 'fetchData'
   }
 }
 </script>

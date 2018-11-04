@@ -34,9 +34,7 @@
               >
             </v-img>
             </router-link>
-            <v-card-text>
-              {{ post.intro }}
-            </v-card-text>
+            <v-card-text v-html="post.intro"></v-card-text>
             <v-card-actions>
               <v-btn icon small class="light-blue--text">
                 <v-icon small >thumb_up</v-icon>
@@ -97,7 +95,6 @@ export default {
         this.$route.query.type = this.$route.meta.type
       }
       api.fetchData(this.$route.query).then(res => {
-        console.log('res ===>', res)
         this.posts = res.data.posts
         this.page = res.data.page
         this.total = Math.ceil(res.data.total / 25)

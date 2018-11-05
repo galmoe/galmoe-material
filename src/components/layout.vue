@@ -154,7 +154,7 @@
     </v-toolbar>
     <message />
     <v-content>
-      <v-container fluid fill-height>
+      <v-container fluid>
         <v-layout>
           <router-view></router-view>
         </v-layout>

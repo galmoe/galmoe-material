@@ -10,15 +10,19 @@
     <div class="content-container">
       <div class="item" v-for="(post, index) in posts" :key="index">
         <div class="thumb">
-          <router-link :to="{name: 'post', params:{pid: post.pid}}" class="thumb">
+          <a :href="`/post/${ post.pid }`" target="_blank" class="thumb">
             <img :src="post.thumb" :alt="post.title" :title="post.title">
-          </router-link>
+          </a>
         </div>
         <div class="detail">
           <div class="detail-spacing">
-            <router-link :to="{name: 'post', params:{pid: post.pid}}" :title="post.title" class="d-title">{{post.title}}</router-link>
-            <router-link :to="{name: 'user', params:{uid: post.uid}}" class="d-info d-author">{{post.uname}}</router-link>
-            <span class="d-info">{{ post.date | timeFilter }}</span>
+            <a :href="`/post/${ post.pid }`" :title="post.title" target="_blank" class="d-title">
+              {{ post.title }}
+            </a>
+            <a :href="`/u/${ post.uid }`" :title="post.title" target="_blank" class="d-info d-author">
+              {{ post.uname }}
+            </a>
+            <span class="d-info">{{ post.date | timeFilter('days') }}</span>
           </div>
         </div>
       </div>
@@ -37,15 +41,19 @@
     <div class="content-container">
       <div class="item" v-for="(post, index) in favs" :key="index">
         <div class="thumb">
-          <router-link :to="{name: 'post', params:{pid: post.pid}}" class="thumb">
+          <a :href="`/post/${ post.pid }`" target="_blank" class="thumb">
             <img :src="post.thumb" :alt="post.title" :title="post.title">
-          </router-link>
+          </a>
         </div>
         <div class="detail">
           <div class="detail-spacing">
-            <router-link :to="{name: 'post', params:{pid: post.pid}}" :title="post.title" class="d-title">{{post.title}}</router-link>
-            <router-link :to="{name: 'user', params:{uid: post.uid}}" class="d-info d-author">{{post.uname}}</router-link>
-            <span class="d-info">{{ post.date | timeFilter }}</span>
+            <a :href="`/post/${ post.pid }`" :title="post.title" target="_blank" class="d-title">
+              {{ post.title }}
+            </a>
+            <a :href="`/u/${ post.uid }`" :title="post.title" target="_blank" class="d-info d-author">
+              {{ post.uname }}
+            </a>
+            <span class="d-info">{{ post.date | timeFilter('days') }}</span>
           </div>
         </div>
       </div>
@@ -161,14 +169,27 @@ export default {
     })
   },
   methods: {
-    fetchData () {
+    async fetchData () {
+      await Promise.all([this.getPost(), this.getFav()])
+    },
+    async getPost () {
       const data = {
-        uid: this.$route.params.uid,
-        count: 5
+        uid: this.$route.params.uid
       }
       api.user.post(data).then(({ data }) => {
         this.posts = data.posts
       })
+    },
+    async getFav () {
+      const data = {
+        uid: this.$route.params.uid
+      }
+      api.user.fav(data).then(({ data }) => {
+        this.favs = data.posts
+      })
+    },
+    getComment () {
+    //
     },
     pageChange () {
       this.$router.push({

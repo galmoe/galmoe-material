@@ -9,9 +9,10 @@
   max-width: 1155px;
   overflow: auto;
   white-space: nowrap;
-  .no-data {
-    margin: 0 auto;
-  }
+}
+.no-data {
+  margin: 0 auto;
+  width: 200px;
 }
 .item {
   display: inline-block;

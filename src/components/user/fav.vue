@@ -1,97 +1,79 @@
 <template>
-    <!--<div class="v-card__text">-->
-    <!--<h4><router-link to="fav">收藏-->
-      <!--<v-btn flat icon small color="blue lighten-2">-->
-        <!--<v-icon small>send</v-icon>-->
-      <!--</v-btn></router-link></h4>-->
-  <!--</div>-->
   <v-card>
     <div class="v-card__text"><h4>收藏</h4></div>
     <div id="related">
       <div class="related-item" v-for="(post, index) in posts" :key="index">
         <div class="s-thumb">
-          <router-link :to="{name: 'post', params:{pid: post.pid}}" class="thumb">
+          <a :href="`/post/${ post.pid }`" :title="post.title" target="_blank" class="thumb">
             <img :src="post.thumb" :alt="post.title">
-          </router-link>
+          </a>
         </div>
         <div class="meta-container">
-          <router-link :to="{name: 'post', params:{pid: post.pid}}" :title="post.title" class="meta-title">{{post.title}}</router-link>
+          <a :href="`/post/${ post.pid }`" :title="post.title" target="_blank" class="meta-title">{{ post.title }}</a>
           <span class="meta-author"><v-icon small color="grey">person</v-icon><router-link :to="{name: 'user', params:{uid: post.uid}}" class="d-info d-author">{{post.uname}}</router-link></span>
           <span class="meta-item"><v-icon small color="grey">remove_red_eye</v-icon>&nbsp;233</span>
           <span class="meta-item"><v-icon small color="grey">thumb_up</v-icon>&nbsp;233</span>
           <span class="meta-item">
-            <v-btn icon small class="red--text lighten-3"><v-icon small>favorite</v-icon></v-btn>233
+            <v-btn icon small class="red--text lighten-3" @click="favAct($event, post.pid)"><v-icon small>favorite</v-icon></v-btn>233
           </span>
-          <span class="meta-item"><v-icon small color="grey">access_time</v-icon>&nbsp;收藏于&nbsp;{{post.t}}</span>
+          <span class="meta-item"><v-icon small color="grey">access_time</v-icon>&nbsp;收藏于&nbsp;{{ post.date | timeFilter('days') }}</span>
         </div>
       </div>
+      <div v-if="posts.length === 0" class="no-data">
+        <img src="https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/nodata.png" alt="">
+      </div>
     </div>
-    <div class="text-xs-center">
+    <div class="text-xs-center" v-if="total !== 1">
       <v-pagination
         v-model="page"
-        :length="maxPage"
+        :length="total"
         :total-visible="7"
         circle
+        @input="fetchData"
       ></v-pagination>
     </div>
   </v-card>
 </template>
 
 <script>
+import api from '../../../api'
+
 export default {
   name: 'fav',
+  created () {
+    this.fetchData()
+  },
   data () {
     return {
-      posts: [
-        {
-          title: 'title1 title1 title1title1 title1 title1 title1title1 title1 title1 title1title1',
-          pid: 1,
-          uname: 'Beats0Beats0Beats0Beats0Beats0',
-          uid: 1,
-          thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019607/9362470BA0D8CC701D2DD2C3A9331EB14AD13B64/',
-          v: 233,
-          t: '2018-03-22'
-        },
-        {
-          title: 'title2',
-          pid: 2,
-          uname: 'Beats0',
-          uid: 1,
-          thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019392/1AC565DD04AFE9CDBC650907AB45719D41EEB788/',
-          v: 233,
-          t: 2018
-        },
-        {
-          title: 'some title',
-          pid: 3,
-          uname: 'Beats0',
-          uid: 1,
-          thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019206/A07E7B66D21F401D66C8FAF7E33A509582A1736B/',
-          v: 233,
-          t: 2018
-        },
-        {
-          title: 'some title',
-          pid: 3,
-          uname: 'Beats0',
-          uid: 1,
-          thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525018984/4A9B8293970480323541BE309DD4300D9339C675/',
-          v: 233,
-          t: 2018
-        },
-        {
-          title: 'some title',
-          pid: 3,
-          uname: 'Beats0',
-          uid: 1,
-          thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525014680/9BFA1439EFA7DF58FDE0A90BB805A10D15D5FBAA/',
-          v: 233,
-          t: 2018
-        }
-      ],
-      page: 2,
-      maxPage: 15
+      posts: [],
+      page: 1,
+      total: 1
     }
+  },
+  methods: {
+    fetchData () {
+      const data = {
+        uid: this.$route.params.uid,
+        page: this.page,
+        count: 25
+      }
+      api.user.fav(data).then(({ data }) => {
+        this.posts = data.posts
+        this.$vuetify.goTo(0)
+      })
+    },
+    favAct (ev, pid) {
+      let el = ev.target.parentElement.parentElement
+      if (el.type !== 'button') return
+      if (el.classList.contains('red--text')) {
+        el.classList.remove('red--text')
+      } else {
+        el.classList.add('red--text')
+      }
+    }
+  },
+  watch: {
+    '$router': 'fetchData'
   }
 }
 </script>

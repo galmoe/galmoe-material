@@ -10,10 +10,10 @@
         </div>
         <div class="meta-container">
           <a :href="`/post/${ post.pid }`" :title="post.title" target="_blank" class="meta-title">{{ post.title }}</a>
-          <span class="meta-item"><v-icon small color="grey">remove_red_eye</v-icon>&nbsp;233</span>
-          <span class="meta-item"><v-icon small color="grey">thumb_up</v-icon>&nbsp;233</span>
+          <span class="meta-item"><v-icon small color="grey">remove_red_eye</v-icon>&nbsp;&nbsp;{{ post.pv | formatNumber }}</span>
+          <span class="meta-item"><v-icon small color="grey">thumb_up</v-icon>&nbsp;&nbsp;{{ post.lv | formatNumber }}</span>
           <span class="meta-item">
-            <v-btn icon small class="red--text lighten-3"><v-icon small>favorite</v-icon></v-btn>233
+            <v-btn icon small class="red--text lighten-3"><v-icon small>favorite</v-icon></v-btn>&nbsp;&nbsp;{{ post.fv | formatNumber }}
           </span>
           <span class="meta-item"><v-icon small color="grey">access_time</v-icon>&nbsp;发布于&nbsp;{{ post.date | timeFilter('days') }}</span>
         </div>
@@ -59,6 +59,8 @@ export default {
       }
       api.user.post(data).then(({ data }) => {
         this.posts = data.posts
+        this.page = data.page
+        this.total = Math.ceil(data.total / 25)
         this.$vuetify.goTo(0)
       })
     }

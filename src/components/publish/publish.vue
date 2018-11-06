@@ -14,7 +14,7 @@
       :rules="[Rules.max(40)]"
     ></v-text-field>
     <div class="thumb-uploader">
-      <upload :containerMaxW="1155" :containerMaxH="550" :autoCropWidth="1150" :fixedNumber="[1150, 500]" :visible="showUpload" @close="showUpload=false" :type="'thumb'" @uploadCb="getSrc" />
+      <upload :containerMaxW="1050" :containerMaxH="585" :autoCropWidth="1000" :fixedNumber="[1000, 580]" :visible="showUpload" @close="showUpload=false" :type="'thumb'" @uploadCb="getSrc" />
       <div class="upload-container" v-show="showThumbLabel" @click="showUpload = true">
         <v-icon>add_photo_alternate</v-icon>
         <p>支持2MB内的JPG／JPEG／BMP／PNG格式的高清图片</p>
@@ -91,8 +91,7 @@ export default {
   name: 'publish',
   created () {
     if (this.$route.meta.type === 'edit') {
-      // get init data
-      console.log(this.$route.query)
+      this.fetchData()
     }
   },
   data () {
@@ -162,6 +161,23 @@ export default {
     }
   },
   methods: {
+    fetchData () {
+      const data = {
+        pid: this.$route.params.pid
+      }
+      api.publish.edit(data).then(({ data }) => {
+        this.title = data.title
+        this.sub_title = data.sub_title
+        this.thumb = data.thumb
+        this.mkdown = data.mkdown
+        this.content = data.content
+        this.download.link = data.link
+        this.download.category = data.category
+        this.download.compress = data.compress
+        this.download.download = data.download
+        this.download.meta = data.meta
+      })
+    },
     getSrc (src) {
       this.showThumbLabel = false
       this.thumb = src
@@ -203,15 +219,22 @@ export default {
         compress: this.compress,
         download: this.download
       }
-      console.log(data)
-      api.publish.publish(data).then(({ link }) => {
-        this.link = link
-      })
+      if (this.isEdit) {
+        data.pid = this.$route.params.pid
+        api.publish.update(data)
+      } else {
+        api.publish.publish(data).then(({ link }) => {
+          this.link = link
+        })
+      }
     }
   },
   components: {
     mavonEditor,
     upload
+  },
+  watch: {
+    '$router': 'fetchData'
   }
 }
 

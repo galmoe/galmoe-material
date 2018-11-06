@@ -10,11 +10,10 @@
         </div>
         <div class="meta-container">
           <a :href="`/post/${ post.pid }`" :title="post.title" target="_blank" class="meta-title">{{ post.title }}</a>
-          <span class="meta-author"><v-icon small color="grey">person</v-icon><router-link :to="{name: 'user', params:{uid: post.uid}}" class="d-info d-author">{{post.uname}}</router-link></span>
-          <span class="meta-item"><v-icon small color="grey">remove_red_eye</v-icon>&nbsp;233</span>
-          <span class="meta-item"><v-icon small color="grey">thumb_up</v-icon>&nbsp;233</span>
+          <span class="meta-item"><v-icon small color="grey">remove_red_eye</v-icon>&nbsp;&nbsp;{{ post.pv | formatNumber }}</span>
+          <span class="meta-item"><v-icon small color="grey">thumb_up</v-icon>&nbsp;&nbsp;{{ post.lv | formatNumber }}</span>
           <span class="meta-item">
-            <v-btn icon small class="red--text lighten-3" @click="favAct($event, post.pid)"><v-icon small>favorite</v-icon></v-btn>233
+            <v-btn icon small class="red--text lighten-3" @click="favAct($event, post.pid)"><v-icon small>favorite</v-icon></v-btn>{{ post.fv | formatNumber }}
           </span>
           <span class="meta-item"><v-icon small color="grey">access_time</v-icon>&nbsp;收藏于&nbsp;{{ post.date | timeFilter('days') }}</span>
         </div>

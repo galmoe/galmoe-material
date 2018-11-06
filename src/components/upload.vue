@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="show" :width="containerMaxW">
-    <v-card style="height: 600px">
+    <v-card style="height: 625px">
     <div class="cropper" :style="{width: `${containerMaxW}px`, height: `${containerMaxH}px`}">
       <vueCropper
         ref="cropper"

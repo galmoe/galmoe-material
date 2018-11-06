@@ -19,10 +19,7 @@
             <a :href="`/post/${ post.pid }`" :title="post.title" target="_blank" class="d-title">
               {{ post.title }}
             </a>
-            <a :href="`/u/${ post.uid }`" :title="post.title" target="_blank" class="d-info d-author">
-              {{ post.uname }}
-            </a>
-            <span class="d-info">{{ post.date | timeFilter('days') }}</span>
+            <span class="d-info"><span class="d-info-pv">{{ post.pv | formatNumber }} pv</span>{{ post.date | timeFilter('days') }}</span>
           </div>
         </div>
       </div>
@@ -50,10 +47,7 @@
             <a :href="`/post/${ post.pid }`" :title="post.title" target="_blank" class="d-title">
               {{ post.title }}
             </a>
-            <a :href="`/u/${ post.uid }`" :title="post.title" target="_blank" class="d-info d-author">
-              {{ post.uname }}
-            </a>
-            <span class="d-info">{{ post.date | timeFilter('days') }}</span>
+            <span class="d-info"><span class="d-info-pv">{{ post.pv | formatNumber }} pv</span>{{ post.date | timeFilter('days') }}</span>
           </div>
         </div>
       </div>

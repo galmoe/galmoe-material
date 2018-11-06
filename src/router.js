@@ -143,7 +143,7 @@ export default new Router({
       children: [
         { path: 'publish', meta: { checkLogin: true }, component: publish },
         { path: 'manager', meta: { checkLogin: true }, component: manager },
-        { path: 'edit', meta: { checkLogin: true, type: 'edit' }, component: publish }
+        { path: 'edit/:pid', meta: { checkLogin: true, type: 'edit' }, component: publish }
       ]
     },
     {

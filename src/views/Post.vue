@@ -163,7 +163,6 @@ export default {
     return {
       post: {},
       Rules,
-      pid: this.$route.params.pid,
       download: {
         link: '',
         pwd: '',
@@ -191,7 +190,10 @@ export default {
   computed: {
     ...mapState({
       theme: state => state.theme.theme
-    })
+    }),
+    pid: function () {
+      return this.$route.params.pid
+    }
   },
   methods: {
     ...mapActions({
@@ -257,7 +259,6 @@ export default {
   components: {
     tag,
     comment
-    // floatingBtn
   },
   watch: {
     '$router': 'fetchData'

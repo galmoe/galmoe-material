@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="commentEl">
     <v-tabs
       left
       slot="extension"
@@ -239,7 +239,7 @@
     <div class="text-xs-center">
       <v-pagination
         v-model="page"
-        :length="15"
+        :length="total"
         :total-visible="7"
         circle
       ></v-pagination>
@@ -249,12 +249,19 @@
 
 <script>
 import Rules from '../public/rules'
+import { debounce } from "../public/utils";
+import api from '../../api'
 
 export default {
   name: 'comment',
+  mounted () {
+    window.addEventListener('scroll', debounce(this.commentInit, 200))
+  },
+  // beforeDestroy () {
+  //  ...
+  // },
   data () {
     return {
-      page: 2,
       tab: null,
       items: [
         '按时间排序', '按热度排序'
@@ -263,18 +270,56 @@ export default {
       Rules,
       // reply
       valid: false,
-      reply: ''
+      reply: '',
+      // comment
+      isCommentInit: false,
+      page: 1,
+      total: 1,
+      sort: 't',
+      lists: []
+    }
+  },
+  computed: {
+    pid: function () {
+      return this.$route.params.pid
     }
   },
   methods: {
     log () {
       console.log(1)
     },
+    commentInit () {
+      if (this.isCommentInit === false) {
+        let scrollTop = document.body.scrollTop || document.documentElement.scrollTop
+        if (scrollTop + 400 > this.$refs.commentEl.offsetTop) {
+          console.log('this.$refs.commentEl.offsetTop', this.$refs.commentEl.offsetTop, 'scrollTop', scrollTop)
+          console.log('you can view=========>')
+          this.getComment()
+          this.isCommentInit = true
+        }
+      }
+    },
+    getComment () {
+      const data = {
+        page: this.page,
+        sort: this.sort
+      }
+      api.commnet.get(this.pid, data).then(res => {
+        this.lists = res.lists
+      })
+    },
     submitComment () {
       if ((this.comment || '').length <= 3) return
       if ((this.comment || '').length > 1000) return
       if ((/^\s*$/).test(this.comment)) return
-      console.log('submitComment', this.comment)
+      const data = {
+        content: this.comment
+      }
+      api.commnet.post(this.pid, data).then(res => {
+        if (res.type === 'success') {
+          this.comment = ''
+        }
+      })
     }
   }
 }

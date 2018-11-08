@@ -70,6 +70,10 @@ const api = {
     addTag: (pid, data) => instance.post(`post/tag/${pid}`, data),
     removeTag: (pid, data) => instance.delete(`post/tag/${pid}`, { params: data })
   },
+  commnet: {
+    get: (pid, data) => instance.get(`comment/${pid}`, { params: data }),
+    post: (pid, data) => instance.post(`comment/${pid}`, data)
+  },
   publish: {
     edit: (data) => instance.get(`publish`, { params: data }),
     remove: (data) => instance.delete(`publish`, { params: data }),

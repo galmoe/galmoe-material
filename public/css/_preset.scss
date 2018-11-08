@@ -11,6 +11,9 @@ a {
     color: #00a1d6;
   }
 }
+p {
+  word-break: break-all;
+}
 .application a {
   color: inherit;
   &:hover {

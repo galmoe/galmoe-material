@@ -97,7 +97,7 @@ export default new Router({
       ]
     },
     {
-      path: '/post/:pid',
+      path: '/post/:pid(\\d+)',
       name: 'post',
       component: Post
     },
@@ -107,10 +107,10 @@ export default new Router({
       component: upload
     },
     {
-      path: '/u/:uid',
+      path: '/u/:uid(\\d+)',
       name: 'user',
       component: User,
-      redirect: '/u/:uid/home',
+      redirect: '/u/:uid(\\d+)/home',
       children: [
         { path: 'home', component: uHome },
         { path: 'post', component: uPost },
@@ -143,7 +143,7 @@ export default new Router({
       children: [
         { path: 'publish', meta: { checkLogin: true }, component: publish },
         { path: 'manager', meta: { checkLogin: true }, component: manager },
-        { path: 'edit/:pid', meta: { checkLogin: true, type: 'edit' }, component: publish }
+        { path: 'edit/:pid(\\d+)', meta: { checkLogin: true, type: 'edit' }, component: publish }
       ]
     },
     {

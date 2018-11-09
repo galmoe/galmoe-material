@@ -74,6 +74,10 @@ const api = {
     get: (pid, data) => instance.get(`comment/${pid}`, { params: data }),
     post: (pid, data) => instance.post(`comment/${pid}`, data)
   },
+  reply: {
+    get: (data) => instance.get(`reply`, { params: data }),
+    post: (data) => instance.post(`reply}`, data)
+  },
   publish: {
     edit: (data) => instance.get(`publish`, { params: data }),
     remove: (data) => instance.delete(`publish`, { params: data }),

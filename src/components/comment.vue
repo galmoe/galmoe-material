@@ -22,7 +22,7 @@
           <!--TODO: reply-->
           <div class="v-list__tile v-list__tile--avatar">
             <div class="v-list__tile__avatar">
-              <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;">
+              <a href="/u/1" class="v-avatar">
                 <img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4">
               </a>
             </div>
@@ -30,7 +30,7 @@
                 <v-textarea
                   v-model="comment"
                   auto-grow
-                  :rules="[Rules.required, Rules.blank, Rules.min(3), Rules.max(1000)]"
+                  :rules="[Rules.blank, Rules.min(3), Rules.max(1000)]"
                   counter="1000"
                   label="发表评论"
                   rows="1"
@@ -41,59 +41,44 @@
             </div>
           </div>
           <!--TODO: comment lists-->
-          <div class="v-list__tile v-list__tile--avatar">
+          <div class="v-list__tile v-list__tile--avatar" v-for="(c, index) in lists" :key="c.cid">
             <div class="v-list__tile__avatar">
-              <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;"><img
-                src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4"></a>
+              <a :href="`/u/${c.uid}`" class="v-avatar" target="_blank"><img :src="c.avatar"></a>
             </div>
             <div class="v-list__tile__content">
               <div class="v-list-header">
-                <a href="/u/1">Beats0</a>
-                <span class="time">2018-10-06 12:15</span>
+                <a :href="`/u/${c.uid}`" target="_blank">{{ c.uname }}</a>
+                <span class="time">{{ c.date | timeFilter('days') }}</span>
                 <v-list-tile-action>
                   <v-menu bottom left>
                     <v-btn small slot="activator" icon>
                       <v-icon small>more_vert</v-icon>
                     </v-btn>
                     <v-list>
-                      <v-list-tile @click="">
+                      <v-list-tile @click="removeComment(c.cid)">
                         <v-list-tile-title>删除</v-list-tile-title>
                       </v-list-tile>
-                      <v-list-tile @click="">
+                      <v-list-tile @click="report(c.cid)">
                         <v-list-tile-title>举报</v-list-tile-title>
                       </v-list-tile>
                     </v-list>
                   </v-menu>
                 </v-list-tile-action>
               </div>
-              <div class="content">
-                meta-box some comment
-                meta-box some comment
-                meta-box some comment
-                meta-box some comment
-              </div>
+              <div class="content" v-html="c.content"></div>
               <div class="comment-info">
-                <v-btn flat icon small color="blue lighten-2">
-                  <v-icon small>thumb_up</v-icon>
-                </v-btn>233
-                <v-btn flat icon small color="blue lighten-2">
-                  <v-icon small>thumb_down</v-icon>
-                </v-btn>1
-                <v-btn outline hover small class="no-border">回复</v-btn>
-                <div class="operation">
-                  <div class="spot"></div>
-                  <div class="opera-list" style="display: none;">
-                    <ul>
-                      <li class="blacklist">加入黑名单</li>
-                      <li class="report">举报</li>
-                    </ul>
-                  </div>
-                </div>
+                <!--TODO: add action color-->
+                <!--<v-btn flat icon small color="blue lighten-2">-->
+                <v-btn flat icon small><v-icon small>thumb_up</v-icon></v-btn>{{ c.lv }}
+                <v-btn flat icon small><v-icon small>thumb_down</v-icon></v-btn>{{ c.dv }}
+                <v-btn outline hover small class="no-border" v-if="c.rv" @click="loadMoreReplies(c.cid)">查看 {{ c.rv }} 条回复</v-btn>
+                <v-btn outline hover small class="no-border" @click="showCurrentComment(c.cid)">{{ (c.cid === current ? '取消' : '') }}回复</v-btn>
               </div>
-              <div class="reply">
+              <!--reply box-->
+              <div class="reply" v-if="current === c.cid">
                 <div class="v-list__tile v-list__tile--avatar">
                   <div class="v-list__tile__avatar">
-                    <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;">
+                    <a href="/u/1" class="v-avatar">
                       <img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4">
                     </a>
                   </div>
@@ -101,7 +86,8 @@
                     <v-textarea
                       v-model="comment"
                       auto-grow
-                      :rules="[Rules.required, Rules.blank, Rules.min(3), Rules.max(1000)]"
+                      autofocus
+                      :rules="[Rules.blank, Rules.min(3), Rules.max(1000)]"
                       counter="1000"
                       label="发表评论"
                       rows="1"
@@ -116,8 +102,7 @@
               <div class="replies">
                 <div class="v-list__tile v-list__tile--avatar">
                   <div class="v-list__tile__avatar">
-                    <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;"><img
-                      src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4"></a>
+                    <a href="/u/1" class="v-avatar"><img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4"></a>
                   </div>
                   <div class="v-list__tile__content">
                     <div class="v-list-header">
@@ -146,10 +131,10 @@
                         meta-box some comment
                       </div>
                       <div class="comment-info">
-                      <v-btn flat icon small color="blue lighten-2">
+                      <v-btn flat icon small>
                         <v-icon small>thumb_up</v-icon>
                       </v-btn>233
-                      <v-btn flat icon small color="blue lighten-2">
+                      <v-btn flat icon small>
                         <v-icon small>thumb_down</v-icon>
                       </v-btn>1
                       <v-btn outline hover small class="no-border">回复</v-btn>
@@ -161,7 +146,7 @@
               <div class="reply">
                 <div class="v-list__tile v-list__tile--avatar">
                   <div class="v-list__tile__avatar">
-                    <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;">
+                    <a href="/u/1" class="v-avatar">
                       <img src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4">
                     </a>
                   </div>
@@ -182,57 +167,6 @@
               </div>
             </div>
           </div>
-          <div class="v-list__tile v-list__tile--avatar">
-            <div class="v-list__tile__avatar">
-              <a href="/u/1" class="v-avatar" style="height: 40px; width: 40px;"><img
-                src="https://avatars0.githubusercontent.com/u/29087203?s=460&v=4"></a>
-            </div>
-            <div class="v-list__tile__content">
-              <div class="v-list-header">
-                <a href="/u/1">Beats0</a>
-                <span class="time">2018-10-06 12:15</span>
-                <v-list-tile-action>
-                  <v-menu bottom left>
-                    <v-btn small slot="activator" icon>
-                      <v-icon small>more_vert</v-icon>
-                    </v-btn>
-                    <v-list>
-                      <v-list-tile @click="">
-                        <v-list-tile-title>删除</v-list-tile-title>
-                      </v-list-tile>
-                      <v-list-tile @click="">
-                        <v-list-tile-title>举报</v-list-tile-title>
-                      </v-list-tile>
-                    </v-list>
-                  </v-menu>
-                </v-list-tile-action>
-              </div>
-              <div class="content">
-                meta-box some comment
-                meta-box some comment
-                meta-box some comment
-                meta-box some comment
-              </div>
-              <div class="comment-info">
-                <v-btn flat icon small color="blue lighten-2">
-                  <v-icon small>thumb_up</v-icon>
-                </v-btn>233
-                <v-btn flat icon small color="blue lighten-2">
-                  <v-icon small>thumb_down</v-icon>
-                </v-btn>1
-                <v-btn outline hover small class="no-border">回复</v-btn>
-                <div class="operation">
-                  <div class="spot"></div>
-                  <div class="opera-list" style="display: none;">
-                    <ul>
-                      <li class="blacklist">加入黑名单</li>
-                      <li class="report">举报</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -242,6 +176,7 @@
         :length="total"
         :total-visible="7"
         circle
+        @input="getComment"
       ></v-pagination>
     </div>
   </div>
@@ -249,7 +184,7 @@
 
 <script>
 import Rules from '../public/rules'
-import { debounce } from "../public/utils";
+import { debounce } from '../public/utils'
 import api from '../../api'
 
 export default {
@@ -267,6 +202,8 @@ export default {
         '按时间排序', '按热度排序'
       ],
       comment: undefined,
+      current: 0,
+      currentR: 0,
       Rules,
       // reply
       valid: false,
@@ -276,7 +213,8 @@ export default {
       page: 1,
       total: 1,
       sort: 't',
-      lists: []
+      lists: [],
+      replies: []
     }
   },
   computed: {
@@ -304,8 +242,10 @@ export default {
         page: this.page,
         sort: this.sort
       }
-      api.commnet.get(this.pid, data).then(res => {
-        this.lists = res.lists
+      api.commnet.get(this.pid, data).then(({ data }) => {
+        this.lists = data.lists
+        this.page = data.page
+        this.total = Math.ceil(data.total / 25)
       })
     },
     submitComment () {
@@ -320,6 +260,33 @@ export default {
           this.comment = ''
         }
       })
+    },
+    showCurrentComment (cid) {
+      this.current = this.current === cid ? 0 : cid
+    },
+    showCurrentReply (cid) {
+      this.currentR = this.currentR === cid ? 0 : cid
+    },
+    showReplies (cid) {
+
+    },
+    // TODO: load more
+    loadMoreComments (cid) {
+    //
+    },
+    loadMoreReplies (cid) {
+      const data = {
+        cid
+      }
+      api.reply.get(data).then(({ data }) => {
+        console.log('data', data)
+      })
+    },
+    removeComment (cid) {
+      window.alert(cid)
+    },
+    report (cid) {
+      window.alert(cid)
     }
   }
 }
@@ -332,6 +299,11 @@ export default {
   .v-list__tile--avatar {
     height: auto;
     margin: 5px auto;
+  }
+  .v-avatar {
+    height: 40px;
+    width: 40px;
+    margin-top: 5px;
   }
   .v-list__tile {
     align-items: flex-start;

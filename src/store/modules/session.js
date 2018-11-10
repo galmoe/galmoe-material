@@ -5,7 +5,7 @@ import { getCookie } from '../../public/utils'
 const state = {
   uid_s: '',
   name_s: '',
-  avatar_s: '',
+  avatar_s: 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/akkarin.jpg',
   showLogin_s: false
 }
 

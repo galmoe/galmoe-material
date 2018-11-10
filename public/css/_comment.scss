@@ -1,0 +1,31 @@
+.comment {
+  padding: 0 15px;
+  margin-top: 20px;
+  .content {
+    font-size: 14px;
+    width: 100%;
+    > a {
+      color: #82b1ff;
+      &:hover {
+        color: #00a1d6;
+      }
+    }
+  }
+  .comment-info {
+    font-size: 0.95rem;
+  }
+}
+.replies {
+  width: 100%;
+  .v-list__tile {
+    padding: 0;
+    .v-list__tile__action {
+      visibility: hidden;
+    }
+    &:hover {
+      .v-list__tile__action {
+        visibility: visible;
+      }
+    }
+  }
+}

@@ -38,23 +38,22 @@ function hasUid () {
 }
 
 /*
-* @param {String} iosTime 传入的时间,格式为 ISO-8601
-* @returns {Number} 返回已经去掉后三位的时间戳
-* @description 2015-03-04T00:00:00.000Z => 1425427200
+* @param { String } iosTime 传入的时间,格式为 ISO-8601
+* @returns { Number } 时间戳
+* @description 2015-03-04T00:00:00.000Z => 1425427200000
 * */
 function iosToTimestamp (iosTime) {
   let dstr = String(new Date(iosTime).getTime())
-  return Number(dstr.slice(0, dstr.length - 3))
+  return Number(dstr)
 }
 
 /*
-* @param {Number} timeStamp 传入已经去掉后三位的时间戳
-* @returns {String} 返回时间
+* @param { Number } timeStamp 时间戳
+* @returns { String } 返回时间 可选值: 'YYYY' || 'MM' || 'DD' || 'days'
 * @description timeStamp => yyyy-mm-dd h:mm:ss
 * */
 function formatDateTime (timeStamp, limit) {
   let date = new Date()
-  date.setTime(timeStamp * 1000)
   let y = date.getFullYear()
   let m = date.getMonth() + 1
   m = m < 10 ? ('0' + m) : m
@@ -82,10 +81,10 @@ function formatDateTime (timeStamp, limit) {
 }
 
 /*
-* @param {String || Number} date 格式为 ISO-8601或者为已经去掉后三位的时间戳
-* @param {String} limit 是否开启限制,可选值: 'YYYY' || 'MM' || 'DD'
-* @returns {String} 返回相对时间
-* @description 2018-08-19T00:00:00.000Z => 6小时前 || 1534636800 => 6小时前
+* @param { String || Number } date 格式为 ISO-8601或者时间戳
+* @param { String } limit 是否开启限制,可选值: 'YYYY' || 'MM' || 'DD' || 'days'
+* @returns { String } 返回相对时间
+* @description 2018-08-19T00:00:00.000Z => 6小时前 || 1534636800000 => 6小时前
 * */
 function timeFilter (date, limit) {
   let timeStamp
@@ -98,7 +97,7 @@ function timeFilter (date, limit) {
     return formatDateTime(timeStamp, limit)
   }
   let time = new Date().getTime()
-  time = parseInt((time - timeStamp * 1000) / 1000)
+  time = parseInt(time - timeStamp)
   let s
   if (time < 60 * 10) {
     return '刚刚'

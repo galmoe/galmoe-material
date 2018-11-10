@@ -76,7 +76,7 @@ const api = {
   },
   reply: {
     get: (data) => instance.get(`reply`, { params: data }),
-    post: (data) => instance.post(`reply}`, data)
+    post: (data) => instance.post(`reply`, data)
   },
   publish: {
     edit: (data) => instance.get(`publish`, { params: data }),

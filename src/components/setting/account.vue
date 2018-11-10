@@ -5,7 +5,7 @@
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-card-text>
         <div class="avatar-upload-container">
-          <img :src="(avatar_s ? avatar_s: 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/akkarin.jpg')"
+          <img :src="avatar_s"
                style="width: 150px; height: 150px;" @click="showUpload = true">
           <v-btn outline @click="showUpload = true">
             <i aria-hidden="true" class="v-icon material-icons">cloud_upload</i>上传头像

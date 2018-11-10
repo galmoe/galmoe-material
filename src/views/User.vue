@@ -17,7 +17,7 @@
             </div>
             <div class="u-info">
               <router-link :to="(isMyself ? '/setting' : '#')" class="u-link">
-                <img :src="(avatar ? avatar : 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/akkarin.jpg')" :alt="uname" class="u-avatar">
+                <img :src="avatar" :alt="uname" class="u-avatar">
               </router-link>
               <div class="u-basic">
                 <div class="u-name">{{ uname }}</div>

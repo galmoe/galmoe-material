@@ -142,7 +142,7 @@
         <button slot="activator" type="button" class="v-btn v-btn--icon v-btn--large">
           <div class="v-avatar" style="height: 32px; width: 32px;">
             <img :src="avatar_s"
-                 :alt="name_s">
+                 :alt="uname_s">
           </div>
         </button>
         <v-list>
@@ -201,7 +201,7 @@ export default {
       theme: state => state.theme.theme,
       showLogin_s: state => state.session.showLogin_s,
       uid_s: state => state.session.uid_s,
-      name_s: state => state.session.name_s,
+      uname_s: state => state.session.uname_s,
       avatar_s: state => state.session.avatar_s
     }),
     ...mapGetters({

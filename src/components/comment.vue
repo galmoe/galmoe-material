@@ -12,6 +12,7 @@
       >
         {{ item }}
       </v-tab>
+      <v-tab>共 {{ total }} 条评论</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item
@@ -70,14 +71,11 @@
                 <!--<v-btn flat icon small color="blue lighten-2">-->
                 <v-btn flat icon small><v-icon small>thumb_up</v-icon></v-btn>{{ c.lv }}
                 <v-btn flat icon small><v-icon small>thumb_down</v-icon></v-btn>{{ c.dv }}
-                <v-btn outline hover small class="no-border" v-if="c.rv" @click="showReplies(c.cid)">{{ (c.cid === currentR ? '隐藏' : '查看') }} {{ c.rv }} 条回复<v-icon small>keyboard_arrow_{{ (c.cid === currentR ? 'up' : 'down') }}</v-icon></v-btn>
-                <v-btn outline hover small class="no-border" @click="showCurrentComment(c.cid)">{{ (c.cid === current ? '取消' : '') }}回复{{ c.cid }}</v-btn>
-              </div>
-              <div class="trans">
-                <!--{{ replies }}-->
+                <v-btn outline hover small class="no-border" v-if="c.rv" @click="showReplies(c.cid)">{{ (lists[`show${c.cid}`] ? '隐藏' : '查看') }} {{ c.rv }} 条回复<v-icon small>keyboard_arrow_{{ (lists[`show${c.cid}`] ? 'up' : 'down') }}</v-icon></v-btn>
+                <v-btn outline hover small class="no-border" @click="showCurrentComment(c.cid)">{{ (c.cid === current ? '取消' : '') }}回复</v-btn>
               </div>
               <!--replies-->
-              <div class="replies" v-if="c.cid === currentShowR">
+              <div class="replies">
                 <div class="v-list__tile v-list__tile--avatar" v-for="r in replies[`r${c.cid}`]" :key="r.rid">
                   <div class="v-list__tile__avatar">
                     <a :href="`/u/${r.uid}`" target="_blank" class="v-avatar"><img :src="r.avatar"></a>
@@ -110,7 +108,7 @@
                       <v-btn flat icon small>
                         <v-icon small>thumb_down</v-icon>
                       </v-btn>1
-                      <v-btn outline hover small class="no-border" @click="showCurrentReply(r.cid, r.uname)">回复</v-btn>
+                      <v-btn outline hover small class="no-border" @click="showCurrentReply(r.cid, r.uname)">回复 {{ r.rid }}</v-btn>
                     </div>
                   </div>
                 </div>
@@ -145,14 +143,18 @@
         </v-card>
       </v-tab-item>
     </v-tabs-items>
-    <div class="text-xs-center">
-      <v-pagination
-        v-model="page"
-        :length="total"
-        :total-visible="7"
-        circle
-        @input="getComment"
-      ></v-pagination>
+    <div class="text-xs-center loading">
+      <!--<v-pagination-->
+        <!--v-model="page"-->
+        <!--:length="total"-->
+        <!--:total-visible="7"-->
+        <!--circle-->
+        <!--@input="getComment"-->
+      <!--&gt;</v-pagination>-->
+      <v-progress-circular
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
     </div>
   </div>
 </template>
@@ -160,6 +162,9 @@
 <script>
 import Rules from '../public/rules'
 import { debounce } from '../public/utils'
+import * as xss from 'xss'
+import * as _ from 'lodash'
+import { commentFilter, replyFilter } from '../filters/xss'
 import api from '../../api'
 import { mapState } from 'vuex'
 
@@ -191,6 +196,7 @@ export default {
       // comment
       isCommentInit: false,
       page: 1,
+      pages: 0,
       total: 1,
       sort: 't',
       lists: [],
@@ -225,72 +231,77 @@ export default {
         sort: this.sort
       }
       api.commnet.get(this.pid, data).then(({ data }) => {
-        this.lists = data.lists
-        this.page = data.page
-        this.total = Math.ceil(data.total / 25)
+        const keys = _.keys(data)
+        const values = _.values(data)
+        for (let i = 0; i < keys.length; i++) {
+          this[keys[i]] = values[i]
+        }
       })
     },
     submitComment () {
       if ((this.comment || '').length <= 3) return
       if ((this.comment || '').length > 1000) return
       if ((/^\s*$/).test(this.comment)) return
-      // const data = {
-      //   content: this.comment
-      // }
-      // api.commnet.post(this.pid, data).then(res => {
-      //   if (res.type === 'success') {
-      // reply data callback
-      let cid = Math.floor(Math.random() * 100) + 1
       const data = {
-        cid,
-        uid: this.uid_s,
-        uname: this.uname_s,
-        avatar: this.avatar_s,
-        content: this.comment,
-        date: Date.now()
+        content: this.comment
       }
-      this.lists.unshift(data)
-      this.comment = ''
-      // }
-      // })
+      api.commnet.post(this.pid, data).then(res => {
+        if (res.type === 'success') {
+          // reply data callback
+          const { cid } = res
+          const data = {
+            cid,
+            uid: this.uid_s,
+            uname: this.uname_s,
+            avatar: this.avatar_s,
+            content: xss(this.comment, replyFilter),
+            date: Date.now()
+          }
+          this.lists.unshift(data)
+          this.comment = ''
+        }
+      })
     },
     submitReply (cid) {
       // send reply data
-      debugger
       let content = ''
       if (this.current === cid) {
-        content = this.reply
+        content = xss(this.reply, replyFilter)
       } else {
-        content = `<a href="/u/${this.receiver}" target="_blank">${this.currentRname}</a> ${this.reply}`
+        content = xss(`<a href="/u/${this.receiver}" target="_blank">${this.currentRname}</a> ${this.reply}`, replyFilter)
       }
       const data = {
         uid: this.uid_s,
         cid,
         receiver: this.receiver,
+        uname: this.uname_s,
         r_name: this.currentRname,
         content,
         parent: this.parent
       }
-      console.log('submit reply', data)
-      // reply data callback
-      let rid = Math.floor(Math.random() * 100) + 1
-      data.rid = rid
-      data.uname = this.uname_s
-      data.avatar = this.avatar_s
-      data.date = Date.now()
-      let _replies = this.replies[`r${cid}`] || []
-      _replies.push(data)
-      // reset reply status
-      this.$set(this.replies, `r${cid}`, _replies)
-      this.reply = ''
-      this.current = 0
-      this.currentR = 0
+      api.reply.post(data).then(res => {
+        console.log('res', res)
+        if (res.type === 'success') {
+          // reply data callback
+          data.rid = res.rid
+          data.avatar = this.avatar_s
+          data.date = Date.now()
+          let _replies = this.replies[`r${cid}`] || []
+          _replies = [..._replies, data]
+          // reset reply status
+          this.$set(this.replies, `r${cid}`, _replies)
+          this.reply = ''
+          this.current = 0
+          this.currentR = 0
+        }
+      })
     },
     showCurrentComment (cid) {
       this.current = this.current === cid ? 0 : cid
       this.reply = ''
       this.parent = 0
       this.currentRname = ''
+      debugger
     },
     showReplies (cid) {
       this.currentShowR = this.currentShowR === cid ? 0 : cid
@@ -298,9 +309,9 @@ export default {
       if (!this.replies[`load${cid}`]) {
         this.loadMoreReplies(cid)
       }
+      this.$set(this.replies, `show${cid}`, !this.replies[`show${cid}`])
     },
     showCurrentReply (cid, uname) {
-      debugger
       this.receiver = cid
       this.currentRname = '@' + uname
       // this.currentR = this.currentR === cid ? 0 : cid
@@ -312,7 +323,6 @@ export default {
     //
     },
     loadMoreReplies (cid) {
-      console.log('go')
       const data = {
         cid,
         page: this.replies[`page${cid}`] || 1

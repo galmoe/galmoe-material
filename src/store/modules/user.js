@@ -1,5 +1,6 @@
 import * as type from '../types'
 import api from '../../../api'
+import * as _ from 'lodash'
 
 const state = {
   uid: '',
@@ -11,11 +12,17 @@ const state = {
 
 const mutations = {
   [type.GETUSERINFO] (state, user) {
-    state.uid = user.uid
-    state.uname = user.uname
-    state.avatar = user.avatar
-    state.background = user.background
-    state.sign = user.sign
+    // use lodash
+    let keys = _.keys(user)
+    let values = _.values(user)
+    for (let i = 0; i < keys.length; i++) {
+      state[keys[i]] = values[i]
+    }
+    // state.uid = user.uid
+    // state.uname = user.uname
+    // state.avatar = user.avatar
+    // state.background = user.background
+    // state.sign = user.sign
   },
   [type.UPLOADBACKGTOUND] (state, src) {
     state.background = src

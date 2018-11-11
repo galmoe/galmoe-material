@@ -4,7 +4,7 @@ import { getCookie } from '../../public/utils'
 
 const state = {
   uid_s: '',
-  name_s: '',
+  uname_s: '',
   avatar_s: 'https://raw.githubusercontent.com/galmoe/galmoe-ts/master/public/images/akkarin.jpg',
   showLogin_s: false
 }
@@ -12,7 +12,7 @@ const state = {
 const mutations = {
   [type.GETSESSIONINFO] (state, user) {
     state.uid_s = user.uid
-    state.name_s = user.uname
+    state.uname_s = user.uname
     state.avatar_s = user.avatar
   },
   [type.UPLOADAVATAR] (state, src) {

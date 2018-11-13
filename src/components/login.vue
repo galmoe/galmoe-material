@@ -83,6 +83,7 @@
                 required
               ></v-text-field>
               <v-text-field
+                v-model="captcha"
                 label="验证码"
                 prepend-icon="verified_user"
                 :rules="[Rules.required, Rules.length(6)]"

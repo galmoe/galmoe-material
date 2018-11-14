@@ -11,7 +11,7 @@
       <div class="item" v-for="(post, index) in posts" :key="index">
         <div class="thumb">
           <a :href="`/post/${ post.pid }`" target="_blank" class="thumb">
-            <img :src="post.thumb" :alt="post.title" :title="post.title">
+            <img :src="`${post.thumb}?w=230`" :alt="post.title" :title="post.title">
           </a>
         </div>
         <div class="detail">
@@ -39,7 +39,7 @@
       <div class="item" v-for="(post, index) in favs" :key="index">
         <div class="thumb">
           <a :href="`/post/${ post.pid }`" target="_blank" class="thumb">
-            <img :src="post.thumb" :alt="post.title" :title="post.title">
+            <img :src="`${post.thumb}?w=230`" :alt="post.title" :title="post.title">
           </a>
         </div>
         <div class="detail">

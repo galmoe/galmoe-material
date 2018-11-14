@@ -12,7 +12,7 @@
       >
         {{ item }}
       </v-tab>
-      <v-tab>共 {{ total }} 条评论</v-tab>
+      <div class="v-tabs__div"><span class="v-tabs__item" style="position: relative;">共 {{ total }} 条评论</span></div>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item
@@ -108,7 +108,7 @@
                       <v-btn flat icon small>
                         <v-icon small>thumb_down</v-icon>
                       </v-btn>1
-                      <v-btn outline hover small class="no-border" @click="showCurrentReply(r.cid, r.uname)">回复 {{ r.rid }}</v-btn>
+                      <v-btn outline hover small class="no-border" @click="showCurrentReply(r.cid, r.uname)">回复</v-btn>
                     </div>
                   </div>
                 </div>

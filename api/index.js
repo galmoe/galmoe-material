@@ -85,7 +85,7 @@ const api = {
     update: (data) => instance.put(`publish`, data),
     list: (data) => instance.get(`publish/list`, { params: data })
   },
-  fetchData: (data) => instance.get(`${data.type}`, { params: data }),
+  fetchData: (data) => instance.get(`post`, { params: data }),
   upload: (data) => instance.post(`upload`, data)
 }
 

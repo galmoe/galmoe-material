@@ -5,7 +5,7 @@
       <div class="related-item" v-for="(post, index) in posts" :key="index">
         <div class="s-thumb">
           <a :href="`/post/${ post.pid }`" :title="post.title" target="_blank" class="thumb">
-            <img :src="post.thumb" :alt="post.title">
+            <img :src="`${post.thumb}?w=230`" :alt="post.title">
           </a>
         </div>
         <div class="meta-container">

@@ -53,6 +53,7 @@ function iosToTimestamp (iosTime) {
 * @description timeStamp => yyyy-mm-dd h:mm:ss
 * */
 function formatDateTime (timeStamp, limit) {
+  debugger
   let date = new Date()
   let y = date.getFullYear()
   let m = date.getMonth() + 1
@@ -76,6 +77,7 @@ function formatDateTime (timeStamp, limit) {
       return `${y}-${m}-${d}`
     }
   } else {
+    debugger
     return `${y}-${m}-${d} ${h}:${minute}:${second}`
   }
 }
@@ -87,6 +89,7 @@ function formatDateTime (timeStamp, limit) {
 * @description 2018-08-19T00:00:00.000Z => 6小时前 || 1534636800000 => 6小时前
 * */
 function timeFilter (date, limit) {
+  debugger
   let timeStamp
   if (typeof (date) === 'string') {
     timeStamp = iosToTimestamp(date)
@@ -111,6 +114,7 @@ function timeFilter (date, limit) {
     s = Math.floor(time / 60 / 60 / 24)
     return s + '天前'
   } else {
+    debugger
     return formatDateTime(timeStamp)
   }
 }

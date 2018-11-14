@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import counter from '@/components/counter'
+import store from './store'
+import { hasUid, getCookie } from './public/utils'
 
 Vue.use(Router)
 
@@ -51,19 +53,19 @@ const Anews = () => import(/* webpackChunkName: "admin" */ '@/components/admin/n
 const about = () => import(/* webpackChunkName: "about" */ '@/components/about/about')
 const usage = () => import(/* webpackChunkName: "about" */ '@/components/about/usage')
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
       path: '/',
       name: 'home',
-      redirect: '/all',
-      meta: { type: 'post' }
+      redirect: '/p',
+      meta: { type: 'p' }
     },
     {
-      path: '/all',
-      name: 'all',
+      path: '/p',
+      name: 'p',
       component: Home,
       meta: { type: 'post' }
     },
@@ -74,7 +76,7 @@ export default new Router({
       meta: { type: 'search' }
     },
     {
-      path: '/category/:category',
+      path: '/category',
       name: 'category',
       component: Home,
       meta: { type: 'category' }
@@ -175,9 +177,35 @@ export default new Router({
       component: counter
     },
     {
-      path: '*',
+      path: '/404',
+      alias: '*',
       name: 'notfound',
       component: NotFound
     }
   ]
 })
+
+// 全局身份确认
+router.beforeEach((to, from, next) => {
+  if (to.meta.checkLogin) {
+    const isLogined = hasUid()
+    if (isLogined) {
+      next()
+    } else {
+      store.commit('session/SHOWLOGIN')
+    }
+  } else if (to.meta.checkAdmin) {
+    const isAdmin = getCookie('uid') === 1
+    if (isAdmin) {
+      next()
+    } else {
+      next({
+        path: '/'
+      })
+    }
+  } else {
+    next()
+  }
+})
+
+export default router

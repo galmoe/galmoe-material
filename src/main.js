@@ -21,6 +21,8 @@ Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 Vue.filter('timeFilter', (date, limit) => {
+  console.log('date', date, limit)
+  debugger
   return timeFilter(date, limit)
 })
 

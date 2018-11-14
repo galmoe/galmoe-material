@@ -39,7 +39,7 @@
           <v-breadcrumbs>
             <v-icon slot="divider">chevron_right</v-icon>
             <v-breadcrumbs-item :to="'/'">首页</v-breadcrumbs-item>
-            <v-breadcrumbs-item :to="`/category/${post.category}`">{{ post.category }}</v-breadcrumbs-item>
+            <v-breadcrumbs-item :to="`/p?type=category&category=${post.category}`">{{ post.category }}</v-breadcrumbs-item>
             <v-breadcrumbs-item disabled>{{ post.title }}</v-breadcrumbs-item>
           </v-breadcrumbs>
           <!--v-html-->

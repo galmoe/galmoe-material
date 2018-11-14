@@ -47,7 +47,7 @@
           <nav :class="['t', {'t-fixed': isFix}]" data-booted="true">
             <div class="v-toolbar__content" style="height: 43px;">
               <div class="v-toolbar__title">
-                <router-link to="home" :class="[`theme--${theme}`,'t-link']">首页</router-link>
+                <router-link to="p" :class="[`theme--${theme}`,'t-link']">首页</router-link>
               </div>
               <div class="v-toolbar__title">
                 <router-link to="post" :class="[`theme--${theme}`,'t-link']">发布</router-link>

@@ -17,7 +17,7 @@
       <upload :containerMaxW="1050" :containerMaxH="585" :autoCropWidth="1000" :fixedNumber="[1000, 580]" :visible="showUpload" @close="showUpload=false" :type="'thumb'" @uploadCb="getSrc" />
       <div class="upload-container" v-show="showThumbLabel" @click="showUpload = true">
         <v-icon>add_photo_alternate</v-icon>
-        <p>支持2MB内的JPG／JPEG／BMP／PNG格式的高清图片</p>
+        <p>支持8MB内的JPG／JPEG／BMP／PNG格式的高清图片</p>
         <p>建议大于960*540像素</p>
       </div>
       <img :src="thumb" v-if="thumb" class="upload-img">

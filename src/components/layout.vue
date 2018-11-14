@@ -125,8 +125,8 @@
         placeholder="Search"
         @keyup.enter="handleSubmit"
       ></v-text-field>
-      <v-btn icon @click="handleShowSearch">
-        <v-icon>search</v-icon>
+      <v-btn icon id="search">
+        <v-icon id="searchI">search</v-icon>
       </v-btn>
       <v-btn icon :to="'/publish'" v-if="isLogined">
         <v-icon>send</v-icon>
@@ -189,6 +189,17 @@ export default {
     // api.user.getMessage()
     // api.user.getErrMessage()
   },
+  mounted () {
+    let body = document.querySelector('body')
+    body.addEventListener('click', (e) => {
+      if (e.target.placeholder === 'Search') return
+      if (e.target.id === 'search' || e.target.id === 'searchI') {
+        this.showSearch = true
+      } else {
+        this.showSearch = false
+      }
+    }, false)
+  },
   data: () => ({
     themeM: true,
     showSearch: false,
@@ -219,9 +230,6 @@ export default {
       changeTheme: 'theme/changeTheme',
       showLogin: 'session/showLogin'
     }),
-    handleShowSearch () {
-      this.showSearch = !this.showSearch
-    },
     handleSubmit () {
       window.alert(this.q)
     },

@@ -1,13 +1,13 @@
 <template>
   <v-container grid-list-xl>
-    <v-layout row wrap v-scroll="onScroll">
+    <v-layout row wrap>
       <v-flex md12>
         <v-card class="h">
           <div class="v-parallax u">
             <div class="parallax-img-container">
               <img :src="(background ? background: 'https://ws1.sinaimg.cn/large/006nOlwNly1fwfzijcndvj315o0ogtgr.jpg')"
                    class="parallax-img"
-                   :style="{top: `${offsetTop}px`}">
+                   ref="parallaxEl">
             </div>
             <div class="banner-editor">
               <v-btn icon class="grey darken-2 white--text" @click="showUpload=true" v-if="isMyself">
@@ -93,12 +93,17 @@ export default {
     return {
       showUpload: false,
       uid: this.$route.params.uid,
-      isFix: false,
-      offsetTop: 0
+      isFix: false
     }
   },
   created () {
     this.fetchData()
+  },
+  destroyed () {
+    document.removeEventListener('scroll', this.onScroll)
+  },
+  mounted () {
+    document.addEventListener('scroll', this.onScroll)
   },
   computed: {
     ...mapState({
@@ -131,8 +136,10 @@ export default {
       window.alert(this.$route.params.uid)
     },
     onScroll (e) {
-      this.offsetTop = window.pageYOffset || document.documentElement.scrollTop
-      if (this.offsetTop >= 500) {
+      let offsetTop = window.pageYOffset || document.documentElement.scrollTop
+      console.log('User alive')
+      this.$refs.parallaxEl.style.top = offsetTop + 'px'
+      if (offsetTop >= 500) {
         this.isFix = true
       } else {
         this.isFix = false

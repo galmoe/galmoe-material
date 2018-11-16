@@ -12,7 +12,7 @@
       >
         {{ item }}
       </v-tab>
-      <div class="v-tabs__div"><span class="v-tabs__item" style="position: relative;">共 {{ total }} 条评论</span></div>
+      <div class="v-tabs__div"><span class="v-tabs__item" style="position: relative;"> {{ (ct ? `共 ${ct} 条评论` : '暂无评论') }} </span></div>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item
@@ -20,7 +20,14 @@
         :key="item"
       >
         <v-card flat class="comment">
-          <!--TODO: reply-->
+          <div class="text-xs-center loading">
+            <v-progress-circular
+              color="primary"
+              indeterminate
+              :width="2"
+              v-if="loading"
+            ></v-progress-circular>
+          </div>
           <div class="v-list__tile v-list__tile--avatar">
             <div class="v-list__tile__avatar">
               <a :href="`/u/${uid_s}`" class="v-avatar">
@@ -48,7 +55,7 @@
             <div class="v-list__tile__content">
               <div class="v-list-header">
                 <a :href="`/u/${c.uid}`" target="_blank">{{ c.uname }}</a>
-                <span class="time">{{ c.date | timeFilter('days') }}</span>
+                <span class="time">{{ c.date | timeFilter  }}</span>
                 <v-list-tile-action>
                   <v-menu bottom left>
                     <v-btn small slot="activator" icon>
@@ -76,6 +83,14 @@
               </div>
               <!--replies-->
               <div class="replies">
+                <div class="text-xs-center">
+                  <v-progress-circular
+                    color="primary"
+                    indeterminate
+                    :width="2"
+                    v-if="replies[`loading${c.cid}`]"
+                  ></v-progress-circular>
+                </div>
                 <div class="v-list__tile v-list__tile--avatar" v-for="r in replies[`r${c.cid}`]" :key="r.rid">
                   <div class="v-list__tile__avatar">
                     <a :href="`/u/${r.uid}`" target="_blank" class="v-avatar"><img :src="r.avatar"></a>
@@ -137,70 +152,68 @@
                   </div>
                 </div>
               </div>
-              <v-btn outline hover small class="no-border" v-if="c.rv && replies[`page${c.cid}`] <= replies[`maxPage${c.cid}`]" @click="loadMoreReplies(c.cid)">加载更多回复<v-icon small>keyboard_arrow_down</v-icon></v-btn>
+              <v-btn outline hover small class="no-border" v-if="c.rv && replies[`page${c.cid}`] < replies[`pages${c.cid}`]" @click="loadMoreReplies(c.cid)">加载更多回复<v-icon small>keyboard_arrow_down</v-icon></v-btn>
             </div>
           </div>
         </v-card>
       </v-tab-item>
     </v-tabs-items>
-    <div class="text-xs-center loading">
-      <!--<v-pagination-->
-        <!--v-model="page"-->
-        <!--:length="total"-->
-        <!--:total-visible="7"-->
-        <!--circle-->
-        <!--@input="getComment"-->
-      <!--&gt;</v-pagination>-->
-      <v-progress-circular
-        color="primary"
-        indeterminate
-      ></v-progress-circular>
+    <div class="text-xs-center" v-show="page && page<=pages">
+      <v-pagination
+        v-model="page"
+        :length="pages"
+        :total-visible="7"
+        circle
+        @input="pageChange"
+      ></v-pagination>
     </div>
   </div>
 </template>
 
 <script>
 import Rules from '../public/rules'
-import { debounce } from '../public/utils'
 import * as xss from 'xss'
 import * as _ from 'lodash'
+import { getElementViewTop } from '../public/dom'
 import { commentFilter, replyFilter } from '../filters/xss'
 import api from '../../api'
 import { mapState } from 'vuex'
 
 export default {
   name: 'comment',
-  mounted () {
-    window.addEventListener('scroll', debounce(this.commentInit, 200))
+  destroyed () {
+    document.removeEventListener('scroll', this.commentInit)
   },
-  // beforeDestroy () {
-  //  ...
-  // },
+  mounted () {
+    document.addEventListener('scroll', _.debounce(this.commentInit, 200))
+  },
   data () {
     return {
       tab: null,
       items: [
         '按时间排序', '按热度排序'
       ],
-      comment: undefined,
+      comment: '',
       current: 0,
       reply: '',
-      currentCname: '',
       currentRname: '',
       receiver: 0,
       currentR: 0,
       currentShowR: 0,
       parent: 0,
       Rules,
-      valid: false,
       // comment
       isCommentInit: false,
-      page: 1,
+      page: 0,
+      currentPage: 0,
       pages: 0,
-      total: 1,
+      cv: 0,
+      ct: 0,
       sort: 't',
       lists: [],
-      replies: {}
+      started: 0,
+      replies: {},
+      loading: true
     }
   },
   computed: {
@@ -216,16 +229,23 @@ export default {
   methods: {
     commentInit () {
       if (this.isCommentInit === false) {
-        let scrollTop = document.body.scrollTop || document.documentElement.scrollTop
-        if (scrollTop + 400 > this.$refs.commentEl.offsetTop) {
-          console.log('this.$refs.commentEl.offsetTop', this.$refs.commentEl.offsetTop, 'scrollTop', scrollTop)
-          console.log('you can view=========>')
+        if (getElementViewTop(this.$refs.commentEl) <= 500) {
           this.getComment()
           this.isCommentInit = true
         }
       }
     },
+    pageChange () {
+      if (this.pages === 0) {
+        this.getComment()
+      } else if (this.pages !== 0 && this.pages !== 1 && this.page - 1 < this.pages && this.page !== this.currentPage) {
+        this.getComment()
+      }
+    },
     getComment () {
+      this.lists = []
+      this.replies = {}
+      this.loading = true
       const data = {
         page: this.page,
         sort: this.sort
@@ -236,6 +256,9 @@ export default {
         for (let i = 0; i < keys.length; i++) {
           this[keys[i]] = values[i]
         }
+        this.loading = false
+        this.currentPage = this.page
+        console.log(this.currentPage)
       })
     },
     submitComment () {
@@ -254,7 +277,7 @@ export default {
             uid: this.uid_s,
             uname: this.uname_s,
             avatar: this.avatar_s,
-            content: xss(this.comment, replyFilter),
+            content: xss(this.comment, commentFilter),
             date: Date.now()
           }
           this.lists.unshift(data)
@@ -301,45 +324,44 @@ export default {
       this.reply = ''
       this.parent = 0
       this.currentRname = ''
-      debugger
     },
     showReplies (cid) {
       this.currentShowR = this.currentShowR === cid ? 0 : cid
       this.reply = ''
       if (!this.replies[`load${cid}`]) {
+        this.$set(this.replies, `loading${cid}`, true)
         this.loadMoreReplies(cid)
       }
       this.$set(this.replies, `show${cid}`, !this.replies[`show${cid}`])
     },
     showCurrentReply (cid, uname) {
+      this.current = 0
       this.receiver = cid
       this.currentRname = '@' + uname
       // this.currentR = this.currentR === cid ? 0 : cid
       this.currentR = cid
       this.parent = cid
     },
-    // TODO: load more
-    loadMoreComments (cid) {
-    //
-    },
     loadMoreReplies (cid) {
       const data = {
         cid,
-        page: this.replies[`page${cid}`] || 1
+        page: this.replies[`page${cid}`] + 1 || 1
       }
       api.reply.get(data).then(({ data }) => {
         if (!data) return
-        const { replies, page, total } = data
+        const { replies, page, pages } = data
         // replies
         let _replies = this.replies[`r${cid}`] || []
         _replies = [..._replies, ...replies]
         this.$set(this.replies, `r${cid}`, _replies)
         // pages
-        this.$set(this.replies, `page${cid}`, page + 1)
-        // maxPage
-        this.$set(this.replies, `maxPage${cid}`, Math.ceil(total / 10))
+        this.$set(this.replies, `page${cid}`, page)
+        // pages
+        this.$set(this.replies, `pages${cid}`, pages)
         // loaded
         this.$set(this.replies, `load${cid}`, true)
+        // loading
+        this.$set(this.replies, `loading${cid}`, false)
       })
     },
     removeComment (cid) {

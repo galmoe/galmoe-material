@@ -1,6 +1,6 @@
 <template>
   <v-container grid-list-xl>
-    <v-layout row wrap v-scroll="onScroll">
+    <v-layout row wrap>
       <!--left-->
       <v-flex md8>
         <v-card>
@@ -8,7 +8,7 @@
             <div class="parallax-img-container">
               <img :src="post.thumb"
                    class="parallax-img"
-                   :style="{top: `${offsetTop}px`}">
+                   ref="parallaxEl">
             </div>
             <v-card-text>
               <h2>{{ post.title }}</h2>
@@ -21,13 +21,13 @@
             </v-card-text>
             <div class="v-list__tile v-list__tile--avatar">
               <div class="v-list__tile__avatar">
-                <router-link :to="{ name: 'user', params: { uid: post.uid } }" class="v-avatar" style="height: 40px; width: 40px;">
+                <a :href="`/u/${post.uid}`" class="v-avatar">
                   <img :src="post.avatar"/>
-                </router-link>
+                </a>
               </div>
               <div class="v-list__tile__content">
                 <div class="v-list__tile__title">
-                  <router-link :to="{ name: 'user', params: {uid: post.uid} }">{{ post.uname }}</router-link>
+                  <a :href="`/u/${post.uid}`">{{ post.uname }}</a>
                 </div>
               </div>
               <div class="v-list__tile__action">
@@ -159,6 +159,12 @@ export default {
   created () {
     this.fetchData()
   },
+  destroyed () {
+    document.removeEventListener('scroll', this.onScroll)
+  },
+  mounted () {
+    document.addEventListener('scroll', this.onScroll)
+  },
   data () {
     return {
       post: {},
@@ -176,7 +182,6 @@ export default {
       isFav: false,
       captcha: '',
       captchaURL: `${backEnd}/api/captcha`,
-      offsetTop: 0,
       similar: [
         { thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019127/DA6093ACF7035120832A27484995AEF0C04B091F/' },
         { thumb: 'https://steamuserimages-a.akamaihd.net/ugc/915793902525019316/2E074CB8784B2CB98F2EEDC039120BD0DC82831E/' },
@@ -206,7 +211,8 @@ export default {
       })
     },
     onScroll (e) {
-      this.offsetTop = window.pageYOffset || document.documentElement.scrollTop
+      let offsetTop = window.pageYOffset || document.documentElement.scrollTop
+      this.$refs.parallaxEl.style.top = offsetTop + 'px'
     },
     captcha_cb () {
       const data = {

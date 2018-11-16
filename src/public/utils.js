@@ -53,7 +53,6 @@ function iosToTimestamp (iosTime) {
 * @description timeStamp => yyyy-mm-dd h:mm:ss
 * */
 function formatDateTime (timeStamp, limit) {
-  debugger
   let date = new Date()
   let y = date.getFullYear()
   let m = date.getMonth() + 1
@@ -77,7 +76,6 @@ function formatDateTime (timeStamp, limit) {
       return `${y}-${m}-${d}`
     }
   } else {
-    debugger
     return `${y}-${m}-${d} ${h}:${minute}:${second}`
   }
 }
@@ -89,7 +87,6 @@ function formatDateTime (timeStamp, limit) {
 * @description 2018-08-19T00:00:00.000Z => 6小时前 || 1534636800000 => 6小时前
 * */
 function timeFilter (date, limit) {
-  debugger
   let timeStamp
   if (typeof (date) === 'string') {
     timeStamp = iosToTimestamp(date)
@@ -99,7 +96,7 @@ function timeFilter (date, limit) {
   if (limit) {
     return formatDateTime(timeStamp, limit)
   }
-  let time = new Date().getTime()
+  let time = new Date().getTime() / 1000
   time = parseInt(time - timeStamp)
   let s
   if (time < 60 * 10) {
@@ -114,7 +111,6 @@ function timeFilter (date, limit) {
     s = Math.floor(time / 60 / 60 / 24)
     return s + '天前'
   } else {
-    debugger
     return formatDateTime(timeStamp)
   }
 }
@@ -125,18 +121,6 @@ function timeFilter (date, limit) {
 * */
 function transferContent (content) {
   return content.replace(/\n/gm, '<br>')
-}
-
-/*
-* debounce
-* */
-function debounce (fn, idle) {
-  let setTm
-  if (!idle || idle <= 0) return fn
-  return function () {
-    clearTimeout(setTm)
-    setTm = setTimeout(fn.bind(this, ...arguments), idle)
-  }
 }
 
 // see https://stackoverflow.com/a/33928558/9002383
@@ -168,6 +152,5 @@ export {
   timeFilter,
   formatDateTime,
   transferContent,
-  debounce,
   copy
 }

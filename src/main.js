@@ -7,12 +7,14 @@ import { timeFilter } from './public/utils'
 import Vuetify from 'vuetify'
 import vueCropper from 'vue-cropper'
 import Viewer from 'v-viewer'
+import InfiniteLoading from 'vue-infinite-loading'
 
 // import 'vuetify/dist/vuetify.min.css'
 
 Vue.use(Vuetify)
 Vue.use(vueCropper)
 Vue.use(Viewer)
+Vue.use(InfiniteLoading)
 
 Vue.config.productionTip = false
 
@@ -21,8 +23,6 @@ Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 Vue.filter('timeFilter', (date, limit) => {
-  console.log('date', date, limit)
-  debugger
   return timeFilter(date, limit)
 })
 

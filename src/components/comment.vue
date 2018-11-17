@@ -42,10 +42,35 @@
                   counter="1000"
                   label="发表评论"
                   rows="1"
-                  append-icon="send"
-                  @click:append="submitComment"
+                  append-icon="sentiment_satisfied_alt"
+                  append-outer-icon="send"
+                  @click:append="handleClickSticker"
+                  @click:append-outer="submitComment"
                 >
                 </v-textarea>
+                <div class="sticker-container" v-if="showSticker">
+                  <div class="sticker-box scroll-sm">
+                    <ul class="sticker-list">
+                      <li class="sticker-popover" v-for="sticker in stickers" :key="sticker.src" @click="handleAppendSticker(sticker.src)">
+                        <img class="sticker" :src="sticker.src" alt="">
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="sticker-pagination">
+                    <ul class="sticker-menu">
+                      <li><span>
+                        <v-btn icon small class="light-blue--text"><v-icon small>chevron_left</v-icon></v-btn>
+                      </span></li>
+                      <li><span class="sticker-pager light-blue--text">{{ stickerPage }}/{{ stickerPages }}</span></li>
+                      <li><span>
+                        <v-btn icon small class="light-blue--text"><v-icon small>chevron_right</v-icon></v-btn>
+                      </span></li>
+                      <li><span>
+                        <v-btn icon small class="light-blue--text"><v-icon small>insert_photo</v-icon></v-btn>
+                      </span></li>
+                    </ul>
+                  </div>
+                </div>
             </div>
           </div>
           <div class="v-list__tile v-list__tile--avatar" v-for="c in lists" :key="c.cid">
@@ -213,7 +238,11 @@ export default {
       lists: [],
       started: 0,
       replies: {},
-      loading: true
+      loading: true,
+      showSticker: false,
+      stickers: {},
+      stickerPage: 0,
+      stickerPages: 0
     }
   },
   computed: {
@@ -258,10 +287,28 @@ export default {
         }
         this.loading = false
         this.currentPage = this.page
-        console.log(this.currentPage)
       })
     },
+    handleClickSticker () {
+      this.showSticker = !this.showSticker
+      // TODO: get init sticker json data
+      // if (this.stickerPage !== 0 && this.sticker + 1 > this.sickers) return
+      if (_.isEmpty(this.stickers)) {
+        const data = {
+          page: this.stickerPage + 1
+        }
+        api.img.sticker(data).then(res => {
+          this.stickers = res.stickers
+          this.stickerPage = res.page
+          this.stickerPages = res.pages
+        })
+      }
+    },
+    handleAppendSticker (src) {
+      this.comment += `<img src="${src}" class="sticker">`
+    },
     submitComment () {
+      console.log('submit')
       if ((this.comment || '').length <= 3) return
       if ((this.comment || '').length > 1000) return
       if ((/^\s*$/).test(this.comment)) return

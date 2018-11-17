@@ -190,8 +190,7 @@ export default {
     // api.user.getErrMessage()
   },
   mounted () {
-    let body = document.querySelector('body')
-    body.addEventListener('click', (e) => {
+    document.addEventListener('click', (e) => {
       if (e.target.placeholder === 'Search') return
       if (e.target.id === 'search' || e.target.id === 'searchI') {
         this.showSearch = true

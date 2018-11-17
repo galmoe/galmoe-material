@@ -96,23 +96,28 @@ function timeFilter (date, limit) {
   if (limit) {
     return formatDateTime(timeStamp, limit)
   }
-  let time = new Date().getTime() / 1000
-  time = parseInt(time - timeStamp)
-  let s
-  if (time < 60 * 10) {
-    return '刚刚'
-  } else if ((time < 60 * 60) && (time >= 60 * 10)) {
-    s = Math.floor(time / 60)
-    return s + '分钟前'
-  } else if ((time < 60 * 60 * 24) && (time >= 60 * 60)) {
-    s = Math.floor(time / 60 / 60)
-    return s + '小时前'
-  } else if ((time < 60 * 60 * 24 * 3) && (time >= 60 * 60 * 24)) {
-    s = Math.floor(time / 60 / 60 / 24)
-    return s + '天前'
-  } else {
-    return formatDateTime(timeStamp)
+  let seconds = Math.floor((new Date() - timeStamp) / 1000)
+  let interval = Math.floor(seconds / 31536000)
+  if (interval > 1) {
+    return formatDateTime(interval)
   }
+  interval = Math.floor(seconds / 2592000)
+  if (interval > 1) {
+    return interval + '个月前'
+  }
+  interval = Math.floor(seconds / 86400)
+  if (interval > 1) {
+    return interval + '天前'
+  }
+  interval = Math.floor(seconds / 3600)
+  if (interval > 1) {
+    return interval + '小时前'
+  }
+  interval = Math.floor(seconds / 60)
+  if (interval > 1) {
+    return interval + '分钟前'
+  }
+  return Math.floor(seconds) + '秒前'
 }
 
 /*

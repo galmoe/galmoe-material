@@ -44,6 +44,7 @@ const manager = () => import(/* webpackChunkName: "publish" */ '@/components/pub
 const upload = () => import(/* webpackChunkName: "upload" */ '@/components/upload')
 
 // admin
+// const AData = () => import(/* webpackChunkName: "admin" */ '@/components/admin/data')
 const Auser = () => import(/* webpackChunkName: "admin" */ '@/components/admin/user')
 const Apost = () => import(/* webpackChunkName: "admin" */ '@/components/admin/post')
 const Acomment = () => import(/* webpackChunkName: "admin" */ '@/components/admin/comment')

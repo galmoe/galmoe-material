@@ -1,189 +1,185 @@
 <template>
   <div ref="commentEl">
-    <v-tabs
-      left
-      slot="extension"
-      v-model="tab"
-    >
-      <v-tabs-slider color="primary"></v-tabs-slider>
-      <v-tab
-        v-for="item in items"
-        :key="item"
-      >
-        {{ item }}
-      </v-tab>
-      <div class="v-tabs__div"><span class="v-tabs__item" style="position: relative;"> {{ (ct ? `共 ${ct} 条评论` : '暂无评论') }} </span></div>
-    </v-tabs>
-    <v-tabs-items v-model="tab">
-      <v-tab-item
-        v-for="item in items"
-        :key="item"
-      >
-        <v-card flat class="comment">
-          <div class="text-xs-center loading">
-            <v-progress-circular
-              color="primary"
-              indeterminate
-              :width="2"
-              v-if="loading"
-            ></v-progress-circular>
+    <div class="v-tabs" slot="extension" data-booted="true">
+      <div class="v-tabs__bar">
+        <div class="v-tabs__wrapper">
+          <div class="v-tabs__container">
+            <div class="v-tabs__slider-wrapper" style="left: 0; width: 94px;" ref="slider">
+              <div class="v-tabs__slider primary"></div>
+            </div>
+            <div class="v-tabs__div" @click="changeSort('t')"><a :class="['v-tabs__item', {'v-tabs__item--active': sort === 't'}]">按时间排序</a></div>
+            <div class="v-tabs__div" @click="changeSort('h')"><a :class="['v-tabs__item', {'v-tabs__item--active': sort === 'h'}]">按热度排序</a></div>
+            <div class="v-tabs__div"><span class="v-tabs__item"> 共 {{ ct }} 条评论 </span></div>
           </div>
-          <div class="v-list__tile v-list__tile--avatar">
-            <div class="v-list__tile__avatar">
-              <a :href="`/u/${uid_s}`" class="v-avatar">
-                <img :src="avatar_s">
-              </a>
+        </div>
+      </div>
+    </div>
+    <v-card flat class="comment">
+      <div class="text-xs-center loading" v-if="loading">
+        <v-progress-circular
+          color="primary"
+          indeterminate
+          :width="2"
+        ></v-progress-circular>
+      </div>
+      <div class="v-list__tile v-list__tile--avatar">
+        <div class="v-list__tile__avatar">
+          <a :href="`/u/${uid_s}`" class="v-avatar">
+            <img :src="avatar_s">
+          </a>
+        </div>
+        <div class="v-list__tile__content">
+          <v-textarea
+            v-model="comment"
+            auto-grow
+            :rules="[Rules.max(1000)]"
+            counter="1000"
+            label="发表评论"
+            rows="1"
+            append-icon="sentiment_satisfied_alt"
+            append-outer-icon="send"
+            @click:append="showSticker = !showSticker"
+            @click:append-outer="submitComment"
+          >
+          </v-textarea>
+          <transition name="fade">
+            <div class="sticker-container" v-if="showSticker">
+              <div class="sticker-box scroll-sm">
+                <ul class="sticker-list" v-if="commentTable === 1">
+                  <li class="emoji-popover" v-for="n in 50" :key="n" @click="handleAppendEmoji(n)">
+                    <img :src="`https://galmoe.github.io/sticker/emoji/${n}.png`">
+                  </li>
+                </ul>
+                <ul class="sticker-list" v-else>
+                  <li class="sticker-popover" v-for="sticker in stickers" :key="sticker.src" @click="handleAppendSticker(sticker.src)">
+                    <img class="sticker" :src="sticker.src" alt="">
+                  </li>
+                </ul>
+              </div>
+              <div class="sticker-pagination">
+                <ul :class="[ 'sticker-menu', { 'show-page': commentTable === 2 } ]">
+                  <li class="page"><span><v-btn icon small class="light-blue--text"><v-icon small>chevron_left</v-icon></v-btn></span></li>
+                  <li class="page"><span class="sticker-page light-blue--text">{{ stickerPage }}/{{ stickerPages }}</span></li>
+                  <li class="page"><span><v-btn icon small class="light-blue--text"><v-icon small>chevron_right</v-icon></v-btn></span></li>
+                  <li><span><v-btn icon small class="light-blue--text" @click="commentTable = 1"><v-icon small>sentiment_satisfied_alt</v-icon></v-btn></span></li>
+                  <li><span><v-btn icon small class="light-blue--text" @click="fetchStickerData"><v-icon small>insert_photo</v-icon></v-btn></span></li>
+                  <li><span><v-btn icon small class="light-blue--text"><v-icon small>cloud_upload</v-icon><input id="sticker-uploader" type="file" accept="image/png, image/jpeg, image/gif, image/jpg,  image/webp" @change="uploadImg($event)"></v-btn></span></li>
+                </ul>
+              </div>
             </div>
-            <div class="v-list__tile__content">
-                <v-textarea
-                  v-model="comment"
-                  auto-grow
-                  :rules="[Rules.max(1000)]"
-                  counter="1000"
-                  label="发表评论"
-                  rows="1"
-                  append-icon="sentiment_satisfied_alt"
-                  append-outer-icon="send"
-                  @click:append="handleClickSticker"
-                  @click:append-outer="submitComment"
-                >
-                </v-textarea>
-                <div class="sticker-container" v-if="showSticker">
-                  <div class="sticker-box scroll-sm">
-                    <ul class="sticker-list">
-                      <li class="sticker-popover" v-for="sticker in stickers" :key="sticker.src" @click="handleAppendSticker(sticker.src)">
-                        <img class="sticker" :src="sticker.src" alt="">
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="sticker-pagination">
-                    <ul class="sticker-menu">
-                      <li><span>
-                        <v-btn icon small class="light-blue--text"><v-icon small>chevron_left</v-icon></v-btn>
-                      </span></li>
-                      <li><span class="sticker-pager light-blue--text">{{ stickerPage }}/{{ stickerPages }}</span></li>
-                      <li><span>
-                        <v-btn icon small class="light-blue--text"><v-icon small>chevron_right</v-icon></v-btn>
-                      </span></li>
-                      <li><span>
-                        <v-btn icon small class="light-blue--text"><v-icon small>insert_photo</v-icon></v-btn>
-                      </span></li>
-                    </ul>
-                  </div>
-                </div>
-            </div>
+          </transition>
+        </div>
+      </div>
+      <div class="v-list__tile v-list__tile--avatar" v-for="c in lists" :key="c.cid">
+        <div class="v-list__tile__avatar">
+          <a :href="`/u/${c.uid}`" class="v-avatar" target="_blank"><img :src="c.avatar"></a>
+        </div>
+        <div class="v-list__tile__content">
+          <div class="v-list-header">
+            <a :href="`/u/${c.uid}`" target="_blank">{{ c.uname }}</a>
+            <span class="time">{{ c.date | timeFilter  }}</span>
+            <v-list-tile-action>
+              <v-menu bottom left>
+                <v-btn small slot="activator" icon>
+                  <v-icon small>more_vert</v-icon>
+                </v-btn>
+                <v-list>
+                  <v-list-tile @click="removeComment(c.cid)">
+                    <v-list-tile-title>删除</v-list-tile-title>
+                  </v-list-tile>
+                  <v-list-tile @click="report(c.cid)">
+                    <v-list-tile-title>举报</v-list-tile-title>
+                  </v-list-tile>
+                </v-list>
+              </v-menu>
+            </v-list-tile-action>
           </div>
-          <div class="v-list__tile v-list__tile--avatar" v-for="c in lists" :key="c.cid">
-            <div class="v-list__tile__avatar">
-              <a :href="`/u/${c.uid}`" class="v-avatar" target="_blank"><img :src="c.avatar"></a>
+          <div class="content trans" v-html="c.content"></div>
+          <div class="comment-info">
+            <!--TODO: add action color-->
+            <!--<v-btn flat icon small color="blue lighten-2">-->
+            <v-btn flat icon small><v-icon small>thumb_up</v-icon></v-btn>{{ c.lv }}
+            <v-btn flat icon small><v-icon small>thumb_down</v-icon></v-btn>{{ c.dv }}
+            <v-btn outline hover small class="no-border" v-if="c.rv" @click="showReplies(c.cid)">{{ (lists[`show${c.cid}`] ? '隐藏' : '查看') }} {{ c.rv }} 条回复<v-icon small>keyboard_arrow_{{ (lists[`show${c.cid}`] ? 'up' : 'down') }}</v-icon></v-btn>
+            <v-btn outline hover small class="no-border" @click="showCurrentComment(c.cid)">{{ (c.cid === current ? '取消' : '') }}回复</v-btn>
+          </div>
+          <!--replies-->
+          <div class="replies">
+            <div class="text-xs-center" v-if="replies[`loading${c.cid}`]">
+              <v-progress-circular
+                color="primary"
+                indeterminate
+                :width="2"
+              ></v-progress-circular>
             </div>
-            <div class="v-list__tile__content">
-              <div class="v-list-header">
-                <a :href="`/u/${c.uid}`" target="_blank">{{ c.uname }}</a>
-                <span class="time">{{ c.date | timeFilter  }}</span>
-                <v-list-tile-action>
-                  <v-menu bottom left>
-                    <v-btn small slot="activator" icon>
-                      <v-icon small>more_vert</v-icon>
-                    </v-btn>
-                    <v-list>
-                      <v-list-tile @click="removeComment(c.cid)">
-                        <v-list-tile-title>删除</v-list-tile-title>
-                      </v-list-tile>
-                      <v-list-tile @click="report(c.cid)">
-                        <v-list-tile-title>举报</v-list-tile-title>
-                      </v-list-tile>
-                    </v-list>
-                  </v-menu>
-                </v-list-tile-action>
+            <div class="v-list__tile v-list__tile--avatar" v-for="r in replies[`r${c.cid}`]" :key="r.rid">
+              <div class="v-list__tile__avatar">
+                <a :href="`/u/${r.uid}`" target="_blank" class="v-avatar"><img :src="r.avatar"></a>
               </div>
-              <div class="content trans" v-html="c.content"></div>
-              <div class="comment-info">
-                <!--TODO: add action color-->
-                <!--<v-btn flat icon small color="blue lighten-2">-->
-                <v-btn flat icon small><v-icon small>thumb_up</v-icon></v-btn>{{ c.lv }}
-                <v-btn flat icon small><v-icon small>thumb_down</v-icon></v-btn>{{ c.dv }}
-                <v-btn outline hover small class="no-border" v-if="c.rv" @click="showReplies(c.cid)">{{ (lists[`show${c.cid}`] ? '隐藏' : '查看') }} {{ c.rv }} 条回复<v-icon small>keyboard_arrow_{{ (lists[`show${c.cid}`] ? 'up' : 'down') }}</v-icon></v-btn>
-                <v-btn outline hover small class="no-border" @click="showCurrentComment(c.cid)">{{ (c.cid === current ? '取消' : '') }}回复</v-btn>
-              </div>
-              <!--replies-->
-              <div class="replies">
-                <div class="text-xs-center">
-                  <v-progress-circular
-                    color="primary"
-                    indeterminate
-                    :width="2"
-                    v-if="replies[`loading${c.cid}`]"
-                  ></v-progress-circular>
+              <div class="v-list__tile__content">
+                <div class="v-list-header">
+                  <a :href="`/u/${r.uid}`">{{ r.uname }}</a>
+                  <span class="time">{{ r.date | timeFilter('days') }}</span>
+                  <v-list-tile-action>
+                    <v-menu bottom left>
+                      <v-btn small slot="activator" icon>
+                        <v-icon small>more_vert</v-icon>
+                      </v-btn>
+                      <v-list>
+                        <v-list-tile @click="removeComment(r.rid)">
+                          <v-list-tile-title>删除</v-list-tile-title>
+                        </v-list-tile>
+                        <v-list-tile @click="report(r.rid)">
+                          <v-list-tile-title>举报</v-list-tile-title>
+                        </v-list-tile>
+                      </v-list>
+                    </v-menu>
+                  </v-list-tile-action>
                 </div>
-                <div class="v-list__tile v-list__tile--avatar" v-for="r in replies[`r${c.cid}`]" :key="r.rid">
-                  <div class="v-list__tile__avatar">
-                    <a :href="`/u/${r.uid}`" target="_blank" class="v-avatar"><img :src="r.avatar"></a>
-                  </div>
-                  <div class="v-list__tile__content">
-                    <div class="v-list-header">
-                      <a :href="`/u/${r.uid}`">{{ r.uname }}</a>
-                      <span class="time">{{ r.date | timeFilter('days') }}</span>
-                      <v-list-tile-action>
-                        <v-menu bottom left>
-                          <v-btn small slot="activator" icon>
-                            <v-icon small>more_vert</v-icon>
-                          </v-btn>
-                          <v-list>
-                            <v-list-tile @click="removeComment(r.rid)">
-                              <v-list-tile-title>删除</v-list-tile-title>
-                            </v-list-tile>
-                            <v-list-tile @click="report(r.rid)">
-                              <v-list-tile-title>举报</v-list-tile-title>
-                            </v-list-tile>
-                          </v-list>
-                        </v-menu>
-                      </v-list-tile-action>
-                    </div>
-                      <div class="content trans" v-html="r.content"></div>
-                      <div class="comment-info">
-                      <v-btn flat icon small>
-                        <v-icon small>thumb_up</v-icon>
-                      </v-btn>233
-                      <v-btn flat icon small>
-                        <v-icon small>thumb_down</v-icon>
-                      </v-btn>1
-                      <v-btn outline hover small class="no-border" @click="showCurrentReply(r.cid, r.uname)">回复</v-btn>
-                    </div>
-                  </div>
+                <div class="content trans" v-html="r.content"></div>
+                <div class="comment-info">
+                  <v-btn flat icon small>
+                    <v-icon small>thumb_up</v-icon>
+                  </v-btn>233
+                  <v-btn flat icon small>
+                    <v-icon small>thumb_down</v-icon>
+                  </v-btn>1
+                  <v-btn outline hover small class="no-border" @click="showCurrentReply(r.cid, r.uname)">回复</v-btn>
                 </div>
               </div>
-              <!--send sub reply-->
-              <div class="reply" v-if="currentR === c.cid || current === c.cid">
-                <div class="v-list__tile v-list__tile--avatar">
-                  <div class="v-list__tile__avatar">
-                    <a :href="`/u/${uid_s}`" class="v-avatar">
-                      <img :src="avatar_s">
-                    </a>
-                  </div>
-                  <div class="v-list__tile__content">
-                    <v-textarea
-                      v-model="reply"
-                      auto-grow
-                      autofocus
-                      :rules="[Rules.max(1000)]"
-                      counter="1000"
-                      rows="1"
-                      :prefix="currentRname"
-                      append-icon="send"
-                      @click:append="submitReply(c.cid)"
-                    >
-                    </v-textarea>
-                  </div>
-                </div>
-              </div>
-              <v-btn outline hover small class="no-border" v-if="c.rv && replies[`page${c.cid}`] < replies[`pages${c.cid}`]" @click="loadMoreReplies(c.cid)">加载更多回复<v-icon small>keyboard_arrow_down</v-icon></v-btn>
             </div>
           </div>
-        </v-card>
-      </v-tab-item>
-    </v-tabs-items>
-    <div class="text-xs-center" v-show="page && page<=pages">
+          <!--send sub reply-->
+          <transition name="fade">
+            <div class="reply" v-if="currentR === c.cid || current === c.cid">
+              <div class="v-list__tile v-list__tile--avatar">
+                <div class="v-list__tile__avatar">
+                  <a :href="`/u/${uid_s}`" class="v-avatar">
+                    <img :src="avatar_s">
+                  </a>
+                </div>
+                <div class="v-list__tile__content">
+                  <v-textarea
+                    v-model="reply"
+                    auto-grow
+                    autofocus
+                    :rules="[Rules.max(1000)]"
+                    counter="1000"
+                    rows="1"
+                    :prefix="currentRname"
+                    append-icon="send"
+                    @click:append="submitReply(c.cid)"
+                  >
+                  </v-textarea>
+                </div>
+              </div>
+            </div>
+            <v-btn outline hover small class="no-border" v-if="c.rv && replies[`page${c.cid}`] < replies[`pages${c.cid}`]" @click="loadMoreReplies(c.cid)">加载更多回复<v-icon small>keyboard_arrow_down</v-icon></v-btn>
+          </transition>
+        </div>
+      </div>
+    </v-card>
+    <div class="text-xs-center" v-show="page && page <= pages">
       <v-pagination
         v-model="page"
         :length="pages"
@@ -199,6 +195,7 @@
 import Rules from '../public/rules'
 import * as xss from 'xss'
 import * as _ from 'lodash'
+import axiosUpload from '../../api/upload'
 import { getElementViewTop } from '../public/dom'
 import { commentFilter, replyFilter } from '../filters/xss'
 import api from '../../api'
@@ -208,9 +205,11 @@ export default {
   name: 'comment',
   destroyed () {
     document.removeEventListener('scroll', this.commentInit)
+    document.removeEventListener('click', this.clickOutSide)
   },
   mounted () {
     document.addEventListener('scroll', _.debounce(this.commentInit, 200))
+    document.addEventListener('click', this.clickOutSide)
   },
   data () {
     return {
@@ -242,7 +241,8 @@ export default {
       showSticker: false,
       stickers: {},
       stickerPage: 0,
-      stickerPages: 0
+      stickerPages: 0,
+      commentTable: 1
     }
   },
   computed: {
@@ -256,6 +256,29 @@ export default {
     }
   },
   methods: {
+    changeSort (sort) {
+      if (this.sort === sort) return
+      console.log(sort)
+      this.sort = sort
+      this.page = 1
+      this.getComment()
+      this.$refs.slider.style.left = this.sort === 't' ? '0px' : '94px'
+    },
+    clickOutSide (ev) {
+      if (!this.showSticker) return
+      console.log(ev)
+      ev = ev || window.event
+      let el = ev.target || ev.srcElement || {}, n = null, r = el
+      for (el.nodeType && (r = el.parentNode); r.parentNode;) {
+        console.log(el.nodeType)
+        n || r.tagName !== 'A' && r.tagName !== 'a' || (n = r), r = r.parentNode
+        if ([...(r.classList || [])].includes('sticker-container')) {
+          console.log('yes')
+        }
+        console.log('no')
+        this.showSticker = false
+      }
+    },
     commentInit () {
       if (this.isCommentInit === false) {
         if (getElementViewTop(this.$refs.commentEl) <= 500) {
@@ -289,8 +312,7 @@ export default {
         this.currentPage = this.page
       })
     },
-    handleClickSticker () {
-      this.showSticker = !this.showSticker
+    fetchStickerData () {
       // TODO: get init sticker json data
       // if (this.stickerPage !== 0 && this.sticker + 1 > this.sickers) return
       if (_.isEmpty(this.stickers)) {
@@ -303,9 +325,23 @@ export default {
           this.stickerPages = res.pages
         })
       }
+      console.log(2)
+      this.commentTable = 2
+    },
+    uploadImg (ev) {
+      let formData = new FormData()
+      formData.append('image', ev.target.files[0])
+      axiosUpload(formData).then(({ data }) => {
+        if (data.type === 'success') {
+          this.comment += `<img src="${data.src}">`
+        }
+      })
     },
     handleAppendSticker (src) {
       this.comment += `<img src="${src}" class="sticker">`
+    },
+    handleAppendEmoji (n) {
+      this.comment += `<img src="https://galmoe.github.io/sticker/emoji/${n}.png">`
     },
     submitComment () {
       console.log('submit')
@@ -329,6 +365,7 @@ export default {
           }
           this.lists.unshift(data)
           this.comment = ''
+          this.showSticker = false
         }
       })
     },

@@ -115,16 +115,18 @@
       <!--&gt;</v-text-field>-->
       <v-spacer></v-spacer>
       <!--toolbar right-->
-      <v-text-field
-        v-model="q"
-        v-show="showSearch"
-        :color="(isDark ? 'white' : 'black')"
-        :dark="isDark"
-        :autofocus="true"
-        height="30"
-        placeholder="Search"
-        @keyup.enter="handleSubmit"
-      ></v-text-field>
+      <transition name="fade">
+        <v-text-field
+          v-model="q"
+          v-show="showSearch"
+          :color="(isDark ? 'white' : 'black')"
+          :dark="isDark"
+          :autofocus="true"
+          height="30"
+          placeholder="Search"
+          @keyup.enter="handleSubmit"
+        ></v-text-field>
+      </transition>
       <v-btn icon id="search">
         <v-icon id="searchI">search</v-icon>
       </v-btn>

@@ -1,8 +1,38 @@
 <template>
-  <div>
-    <h3>this is admin</h3>
-    <router-view></router-view>
-  </div>
+  <v-container grid-list-xl class="n">
+    <v-layout row wrap>
+      <v-flex md12>
+        <v-card class="t-container">
+          <nav class="t t-fixed" data-booted="true">
+            <div class="v-toolbar__content" style="height: 43px;">
+              <div class="v-toolbar__title">
+                <router-link to="data" class="t-link">数据</router-link>
+              </div>
+              <div class="v-toolbar__title">
+                <router-link to="user" class="t-link">用户</router-link>
+              </div>
+              <div class="v-toolbar__title">
+                <router-link to="post" class="t-link">文章</router-link>
+              </div>
+              <div class="v-toolbar__title">
+                <router-link to="comment" class="t-link">评论</router-link>
+              </div>
+              <div class="v-toolbar__title">
+                <router-link to="publish" class="t-link">发布</router-link>
+              </div>
+              <div class="v-toolbar__title">
+                <router-link to="manager" class="t-link">管理</router-link>
+              </div>
+              <div class="v-toolbar__title">
+                <router-link to="report" class="t-link">反馈</router-link>
+              </div>
+            </div>
+          </nav>
+        </v-card>
+        <router-view></router-view>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

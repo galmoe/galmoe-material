@@ -13,7 +13,7 @@ const mutations = {
   [type.GETSESSIONINFO] (state, user) {
     state.uid_s = user.uid
     state.uname_s = user.uname
-    state.avatar_s = user.avatar
+    state.avatar_s = user.avatar || state.avatar_s
   },
   [type.UPLOADAVATAR] (state, src) {
     state.avatar_s = src

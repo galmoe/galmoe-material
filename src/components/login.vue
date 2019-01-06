@@ -83,6 +83,7 @@
                 required
               ></v-text-field>
               <v-text-field
+                v-model="captcha"
                 label="验证码"
                 prepend-icon="verified_user"
                 :rules="[Rules.required, Rules.length(6)]"
@@ -177,6 +178,7 @@ export default {
       }
     },
     handleRegister () {
+      console.log('this.captcha', this.captcha)
       const data = {
         uname: this.uname,
         email: this.email,

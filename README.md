@@ -12,12 +12,12 @@ yarn install
 
 使用vue cli 3调试
 
-```js
+```
 // dev
-npm run serve
+yarn run serve
 
 // build production
-npm run build
+yarn build
 ```
 ### 配置
 配置scss GBK编码方式

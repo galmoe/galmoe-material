@@ -7,12 +7,14 @@ import { timeFilter } from './public/utils'
 import Vuetify from 'vuetify'
 import vueCropper from 'vue-cropper'
 import Viewer from 'v-viewer'
+import InfiniteLoading from 'vue-infinite-loading'
 
 // import 'vuetify/dist/vuetify.min.css'
 
 Vue.use(Vuetify)
 Vue.use(vueCropper)
 Vue.use(Viewer)
+Vue.use(InfiniteLoading)
 
 Vue.config.productionTip = false
 

@@ -17,7 +17,7 @@
                     <div class="ca-category">
                       <svg viewBox="0 0 48 48" height="100%" width="100%"><path d="M20 14l10 10-10 10z"></path></svg>
                     </div>
-                    <router-link :to="{name:'category',params:{ category: post.category }}" class="category-link">
+                    <router-link :to="{name:'p',query:{ type: 'category', category: post.category }}" class="category-link">
                       {{ post.category }}
                     </router-link>
                   </div>
@@ -29,7 +29,7 @@
             <router-link :to="{name:'post',params:{ pid: post.pid}} ">
               <v-img
                 class="white--text"
-                :src="post.thumb"
+                :src="`${post.thumb}?w=500`"
                 v-if="post.thumb"
               >
             </v-img>
@@ -82,7 +82,7 @@ export default {
   methods: {
     pageChange () {
       this.$router.push({
-        name: 'home',
+        name: 'post',
         query: {
           type: this.$route.meta.type,
           page: this.page

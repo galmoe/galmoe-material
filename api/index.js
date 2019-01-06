@@ -83,9 +83,13 @@ const api = {
     remove: (data) => instance.delete(`publish`, { params: data }),
     publish: (data) => instance.post(`publish`, data),
     update: (data) => instance.put(`publish`, data),
-    list: (data) => instance.get(`publish/list`, { params: data })
+    list: (data) => instance.get(`publish/list`, data)
   },
-  fetchData: (data) => instance.get(`${data.type}`, { params: data }),
+  img: {
+    sticker: (data) => instance.get(`img/sticker`, { params: data }),
+    stickerUpdate: (data) => instance.post(`img/sticker`, { params: data })
+  },
+  fetchData: (data) => instance.get(`post`, { params: data }),
   upload: (data) => instance.post(`upload`, data)
 }
 

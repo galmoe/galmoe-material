@@ -2121,3 +2121,8 @@ Vue.component('v-row-expand-transition', {
     mode: String
   }
 })
+Vue.component('infinite-loading', {
+  props: {
+    mode: String
+  }
+})

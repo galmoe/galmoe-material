@@ -220,6 +220,14 @@ nav.v-toolbar--fixed {
   margin: 0 auto;
   cursor: pointer;
 }
+.avatar {
+  width: 40px;
+  height: 40px;
+}
+.v-avatar {
+  width: 40px;
+  height: 40px;
+}
 .avatar-upload-container {
   width: 150px;
   overflow: hidden;
@@ -232,5 +240,5 @@ nav.v-toolbar--fixed {
   white-space: pre-wrap;
 }
 .loading {
-  padding: 20px 0;
+  padding: 10px 0;
 }

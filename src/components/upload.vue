@@ -15,9 +15,10 @@
         :fixed="opt.fixed"
         :fixedBox="opt.fixedBox"
         :fixedNumber="fixedNumber"
+        :full="true"
       ></vueCropper>
       <v-btn outline small color="primary"><i aria-hidden="true" class="v-icon material-icons theme--light primary--text">cloud_upload</i><label class="btn" for="uploads">&nbsp;选择</label></v-btn>
-      <input type="file" id="uploads" style="position:absolute; clip:rect(0 0 0 0);" accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event)">
+      <input type="file" id="uploads" style="position:absolute; clip:rect(0 0 0 0);" accept="image/png, image/jpeg, image/gif, image/jpg,  image/webp" @change="uploadImg($event)">
       <v-btn outline small color="primary" @click="rotateLeft()"><v-icon small>rotate_left</v-icon></v-btn>
       <v-btn outline small color="primary" @click="rotateRight()"><v-icon small>rotate_right</v-icon></v-btn>
       <v-btn outline small color="primary" @click="upload()"><i aria-hidden="true" class="v-icon material-icons theme--light primary--text">check</i>&nbsp;确定</v-btn>

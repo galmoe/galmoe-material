@@ -6,7 +6,7 @@
       <v-card>
         <div style="padding: 10px">
           <v-text-field
-            v-model="tagIpt"
+            v-model.trim="tagIpt"
             append-icon="send"
             :autofocus="true"
             height="30"
@@ -68,7 +68,7 @@ export default {
   },
   methods: {
     goToTag (t) {
-      let routeData = this.$router.resolve({ name: 'tag', params: { tname: t } })
+      let routeData = this.$router.resolve({ name: 'p', query: { type: 'tag', tag: t } })
       window.open(routeData.href, '_blank')
     },
     handleSubmit () {
